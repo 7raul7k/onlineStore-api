@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
@@ -19,6 +20,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public class Order {
     @Id
     @SequenceGenerator(name = "order_sequence",
@@ -66,6 +68,17 @@ public class Order {
     private Customer customer;
 
 
+   public void addOrderDetails(OrderDetail m){
+     orderDetails.add(m);
+       m.setOrder(this);
+   }
 
+   public void eraseOrderDetails(OrderDetail orderDetail){
+      orderDetails.remove(orderDetail);
+   }
 
+    public Order(double ammount, Date orderDate) {
+        this.ammount = ammount;
+        this.orderDate = orderDate;
+    }
 }

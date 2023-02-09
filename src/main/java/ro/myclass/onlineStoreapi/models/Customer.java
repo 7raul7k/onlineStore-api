@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -18,6 +19,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public class Customer {
     @Id
     @SequenceGenerator(name = "customer_sequence",
@@ -66,4 +68,18 @@ public class Customer {
     @JsonManagedReference
     private List<Order> orders = new ArrayList<>();
 
+    public Customer(String email, String password, String fullName) {
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+    }
+
+    public void addOrder(Order order){
+        orders.add(order);
+        order.setCustomer(this);
+    }
+
+    public void eraseOrder(Order order){
+       orders.remove(order);
+    }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -19,6 +20,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public class Product {
     @Id
     @SequenceGenerator(name = "products_sequence",
@@ -80,7 +82,21 @@ public class Product {
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
 
-    
+    public Product(String name, double price, String image, int stock, List<OrderDetail> orderDetails) {
+        this.name = name;
+        this.price = price;
+        this.image = image;
+        this.stock = stock;
+        this.orderDetails = orderDetails;
+    }
 
+    public void addOrderDetails(OrderDetail m) {
+        orderDetails.add(m);
+        m.setProduct(this);
+    }
 
+    public void eraseOrderDetails(OrderDetail m){
+        orderDetails.remove(m);
+
+    }
 }

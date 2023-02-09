@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonClassDescription;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
@@ -18,6 +19,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public class OrderDetail {
     @Id
     @SequenceGenerator(name = "orderDetail_sequence",
@@ -61,8 +63,10 @@ public class OrderDetail {
     @JsonBackReference
     private Product product;
 
-
-
-
-
+    public OrderDetail(double price, int quantity, Order order, Product product) {
+        this.price = price;
+        this.quantity = quantity;
+        this.order = order;
+        this.product = product;
+    }
 }

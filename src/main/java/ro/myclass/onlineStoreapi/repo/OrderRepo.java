@@ -12,4 +12,7 @@ public interface OrderRepo extends JpaRepository<Order,Long> {
 
     @Query("select o from order o where o.customer.id = ?1")
     List<Order> getOrderByCustomerId(int customerId);
+
+
+
 }
