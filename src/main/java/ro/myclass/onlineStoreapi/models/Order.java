@@ -33,11 +33,6 @@ public class Order {
     )
     private Long id;
 
-    @Column(name = "customer_id",
-    nullable = false,
-    columnDefinition = "INT")
-    private int customerId;
-
     @Column(name = "ammount",
     nullable = false,
     columnDefinition = "DOUBLE")
@@ -49,20 +44,13 @@ public class Order {
 
     @Override
     public String toString(){
-        return id+","+customerId+","+ammount+","+orderDate;
+        return id+","+ammount+","+orderDate;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        Order m = (Order) obj;
-        if (this.customerId == m.getCustomerId() && this.ammount == m.getAmmount() && this.orderDate.equals(m.getOrderDate())) {
-            return true;
-        }
-        return false;
-    }
+
     @OneToMany(
-            mappedBy = "customer",
-            cascde = CascadeType.ALL,
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
@@ -70,10 +58,10 @@ public class Order {
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "customer_id",
+    @JoinColumn(
+            name = "customer",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "customer_id_fk"))
-
     @JsonBackReference
     private Customer customer;
 

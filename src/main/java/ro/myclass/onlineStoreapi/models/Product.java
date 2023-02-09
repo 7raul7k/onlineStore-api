@@ -72,10 +72,9 @@ public class Product {
     }
 
     @OneToMany(
-            mappedBy = "orderdetails",
+            mappedBy = "product",
             cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<OrderDetail> orderDetails = new ArrayList<>();

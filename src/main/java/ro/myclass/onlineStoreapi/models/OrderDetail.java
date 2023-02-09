@@ -32,15 +32,6 @@ public class OrderDetail {
     )
     private Long id;
 
-    @Column(name = "order_id",
-    nullable = false,
-    columnDefinition = "INT")
-    private int orderId;
-
-    @Column(name = "product_id",
-    nullable = false,
-    columnDefinition = "INT")
-    private int productId;
 
     @Column(name = "price",
     nullable = false,
@@ -52,32 +43,20 @@ public class OrderDetail {
     columnDefinition = "INT")
     private int quantity;
 
-    @Override
-    public String toString(){
-        return id+","+orderId+","+productId+","+price+","+quantity;
-    }
 
-    @Override
-    public boolean equals(Object obj){
-        OrderDetail m = (OrderDetail) obj;
-        if(this.orderId==m.getOrderId()&&this.productId==m.getProductId()&&this.price==m.getPrice()&&this.quantity==m.getQuantity()){
-            return true;
-        }
-        return false;
-    }
+
 
     @ManyToOne
     @JoinColumn(name = "order_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "order_id_fk"))
-
     @JsonBackReference
     private Order order;
 
     @ManyToOne
     @JoinColumn(name = "product_id",
             referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "order_id_fk"))
+            foreignKey = @ForeignKey(name = "product_id_fk"))
 
     @JsonBackReference
     private Product product;

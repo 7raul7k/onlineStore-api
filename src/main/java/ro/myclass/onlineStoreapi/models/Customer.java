@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +30,17 @@ public class Customer {
     @Column(name = "email",
     nullable = false,
     columnDefinition = "TEXT")
+    @NotEmpty
     private String email;
     @Column(name = "password",
     nullable = false,
     columnDefinition = "TEXT")
+    @NotEmpty
     private String password;
     @Column(name = "full_name",
     nullable = false,
     columnDefinition = "TEXT")
+    @NotEmpty
     private String fullName;
 
     @Override
@@ -54,7 +58,7 @@ public class Customer {
     }
 
     @OneToMany(
-            mappedBy = "orders",
+            mappedBy = "customer",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER
