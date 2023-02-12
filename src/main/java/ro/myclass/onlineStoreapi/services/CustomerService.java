@@ -7,6 +7,7 @@ import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.repo.CustomerRepo;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,8 @@ public class CustomerService {
             }
         }
     }
+
+    @Transactional
     public void addCustomer(Customer customer){
         Optional<Customer> optionalCustomer = this.customerRepo.getCustomerByEmail(customer.getEmail());
 

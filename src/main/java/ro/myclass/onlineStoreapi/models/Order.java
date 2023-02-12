@@ -61,10 +61,10 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(
-            name = "customer",
+            name = "customer_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "customer_id_fk"))
-    @JsonBackReference
+    @JsonBackReference(value = "test1")
     private Customer customer;
 
 

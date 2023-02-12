@@ -1,5 +1,6 @@
 package ro.myclass.onlineStoreapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -65,7 +66,8 @@ public class Customer {
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
-    @JsonManagedReference
+    @JsonManagedReference(value = "test1")
+    @JsonIgnore
     private List<Order> orders = new ArrayList<>();
 
     public Customer(String email, String password, String fullName) {
