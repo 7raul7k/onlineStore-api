@@ -12,6 +12,7 @@ import ro.myclass.onlineStoreapi.models.OrderDetail;
 import ro.myclass.onlineStoreapi.models.Product;
 import ro.myclass.onlineStoreapi.repo.CustomerRepo;
 import ro.myclass.onlineStoreapi.repo.ProductRepo;
+import ro.myclass.onlineStoreapi.services.CustomerService;
 
 import java.util.Date;
 import java.util.List;
@@ -25,7 +26,7 @@ public class OnlineStoreApiApplication {
 	}
 
 	@Bean
-	CommandLineRunner commandLineRunner(CustomerRepo customerRepo, ProductRepo productRepo){
+	CommandLineRunner commandLineRunner(CustomerService customerService){
 		return args -> {
 
 			//getCustomerByEmail
@@ -56,28 +57,40 @@ public class OnlineStoreApiApplication {
 
 
 			//saveCustomer
-			Customer customer = new Customer("andreipopescu@gmail.com","andreipopescu@gmail.com2023","Andrei Popescu");
+//			Customer customer = new Customer("andreipopescu@gmail.com","andreipopescu@gmail.com2023","Andrei Popescu");
 
 //			customerRepo.save(customer);
 
-			Optional<Product> product = productRepo.getProductByName("Glass Clear 8 Oz");
+//			Optional<Product> product = productRepo.getProductByName("Glass Clear 8 Oz");
 
 
 			//add OrderDetails
 
-			Date date = new Date(2022,2,2);
-			Order order = new Order(1900,date);
-
-			customer.addOrder(order);
-
-			OrderDetail orderDetail = new OrderDetail(1900,4,order,product.get());
-
-			order.addOrderDetails(orderDetail);
-
-
-			Customer
+//			Date date = new Date(2022,2,2);
+//			Order order = new Order(1900,date);
+//
+//			customer.addOrder(order);
+//
+//			OrderDetail orderDetail = new OrderDetail(1900,4,order,product.get());
+//
+//			order.addOrderDetails(orderDetail);
 
 
+			//addCustomer
+
+//			Customer customer1 = new Customer("cristianpopescu@gmail.com","cristianpopescu@gmail.com2023","Cristian Popescu");
+//
+////			customerService.addCustomer(customer1);
+//
+//		  //removeCustomer
+//
+//			customerService.removeCustomer(customer1.getEmail());
+
+//			//getCustomerByEmail
+//
+//			Customer customer = customerService.returnCustomerByEmail("andreipopescu@gmail.com");
+//
+//			System.out.println(customer);
 		};
 	}
 }

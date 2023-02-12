@@ -1,8 +1,7 @@
 package ro.myclass.onlineStoreapi.exceptions;
 
-public class ListEmptyExceptions extends RuntimeException{
-    public ListEmptyExceptions() {
+public class ListEmptyException extends RuntimeException{
+    public ListEmptyException() {
         super("List is Empty!");
-
     }
 }

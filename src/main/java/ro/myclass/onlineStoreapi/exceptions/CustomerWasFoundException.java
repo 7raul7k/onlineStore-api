@@ -1,7 +1,8 @@
 package ro.myclass.onlineStoreapi.exceptions;
 
-public class CustomerWasFoundExceptions extends RuntimeException{
-    public CustomerWasFoundExceptions() {
+public class CustomerWasFoundException extends RuntimeException{
+
+    public CustomerWasFoundException() {
         super("Customer was found!");
     }
 }
