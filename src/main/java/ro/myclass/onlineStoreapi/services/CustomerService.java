@@ -66,6 +66,23 @@ public class CustomerService {
     }
 
     public Customer returnCustomerByEmail(String email){
-        return this.customerRepo.getCustomerByEmail(email).get();
+
+        Optional<Customer> customer = this.customerRepo.getCustomerByEmail(email);
+        if(customer.isEmpty()){
+            throw new CustomerNotFoundException();
+        }else{
+            return customer.get();
+        }
+    }
+
+    public List<Customer> getAllCustomer(){
+        List<Customer> customers = this.customerRepo.getAllCustomers();
+
+        if(customers.isEmpty()){
+            throw new ListEmptyException();
+        }else{
+            return this.customerRepo.getAllCustomers();
+        }
+
     }
 }

@@ -78,7 +78,7 @@ public class Product {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JsonManagedReference
+    @JsonManagedReference(value = "testproduct1")
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
 

@@ -8,12 +8,14 @@ import ro.myclass.onlineStoreapi.dto.CustomerDTO;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.services.CustomerService;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/v1")
-public class CustomerResources {
+@RequestMapping("/api/v1/customer")
+public class CustomerResource {
     private CustomerService customerService;
 
-    public CustomerResources(CustomerService customerService) {
+    public CustomerResource(CustomerService customerService) {
         this.customerService = customerService;
     }
 
@@ -36,5 +38,12 @@ public class CustomerResources {
         Customer m = this.customerService.returnCustomerByEmail(email);
 
         return new ResponseEntity<>(m,HttpStatus.FOUND);
+ }
+
+ @GetMapping("/getAllCustomers")
+    public ResponseEntity<List<Customer>> getAllCustomers(){
+        List<Customer> customerList = this.customerService.getAllCustomer();
+
+        return new ResponseEntity<>(customerList,HttpStatus.OK);
  }
 }
