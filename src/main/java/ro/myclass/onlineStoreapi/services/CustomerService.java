@@ -1,6 +1,7 @@
 package ro.myclass.onlineStoreapi.services;
 
 import org.springframework.stereotype.Service;
+import ro.myclass.onlineStoreapi.dto.CustomerDTO;
 import ro.myclass.onlineStoreapi.exceptions.CustomerNotFoundException;
 import ro.myclass.onlineStoreapi.exceptions.CustomerWasFoundException;
 import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
@@ -34,11 +35,21 @@ public class CustomerService {
     }
 
     @Transactional
-    public void addCustomer(Customer customer){
+    public void addCustomer(CustomerDTO customer){
         Optional<Customer> optionalCustomer = this.customerRepo.getCustomerByEmail(customer.getEmail());
 
         if(optionalCustomer.isEmpty()){
-           this.customerRepo.save(customer);
+            try {
+                Customer m = new Customer().builder()
+                        .email(customer.getEmail())
+                        .password(customer.getPassword())
+                        .fullName(customer.getFullName())
+                        .build();
+
+                this.customerRepo.save(m);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }else{
             throw new CustomerWasFoundException();
         }

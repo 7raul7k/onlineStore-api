@@ -67,7 +67,7 @@ public class Customer {
             fetch = FetchType.EAGER
     )
     @JsonManagedReference(value = "test1")
-    @JsonIgnore
+
     private List<Order> orders = new ArrayList<>();
 
     public Customer(String email, String password, String fullName) {

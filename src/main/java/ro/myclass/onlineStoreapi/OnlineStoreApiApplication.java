@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import ro.myclass.onlineStoreapi.dto.CustomerDTO;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.models.Order;
 import ro.myclass.onlineStoreapi.models.OrderDetail;
@@ -78,9 +79,9 @@ public class OnlineStoreApiApplication {
 
 			//addCustomer
 
-//			Customer customer1 = new Customer("cristianpopescu@gmail.com","cristianpopescu@gmail.com2023","Cristian Popescu");
+//			CustomerDTO customer1 = new CustomerDTO("cristianpopescu@gmail.com","cristianpopescu@gmail.com2023","Cristian Popescu");
 //
-////			customerService.addCustomer(customer1);
+//			customerService.addCustomer(customer1);
 //
 //		  //removeCustomer
 //
