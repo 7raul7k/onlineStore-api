@@ -66,7 +66,6 @@ public class CustomerService {
     }
 
     public Customer returnCustomerByEmail(String email){
-
         Optional<Customer> customer = this.customerRepo.getCustomerByEmail(email);
         if(customer.isEmpty()){
             throw new CustomerNotFoundException();
@@ -85,4 +84,6 @@ public class CustomerService {
         }
 
     }
+
+
 }
