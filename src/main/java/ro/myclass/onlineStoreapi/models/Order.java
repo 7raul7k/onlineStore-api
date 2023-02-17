@@ -16,7 +16,7 @@ import java.util.List;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Table(name = "orders")
-@Entity(name = "order")
+@Entity(name = "Order")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
