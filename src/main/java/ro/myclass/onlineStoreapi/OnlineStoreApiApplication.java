@@ -6,7 +6,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import ro.myclass.onlineStoreapi.dto.CreateOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CustomerDTO;
+import ro.myclass.onlineStoreapi.dto.ProductCardRequest;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.models.Order;
 import ro.myclass.onlineStoreapi.models.OrderDetail;
@@ -15,6 +17,7 @@ import ro.myclass.onlineStoreapi.repo.CustomerRepo;
 import ro.myclass.onlineStoreapi.repo.ProductRepo;
 import ro.myclass.onlineStoreapi.services.CustomerService;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -27,71 +30,28 @@ public class OnlineStoreApiApplication {
 	}
 
 	@Bean
-	CommandLineRunner commandLineRunner(CustomerService customerService){
+	CommandLineRunner commandLineRunner(CustomerService customerService,ProductRepo productRepo){
 		return args -> {
-
-			//getCustomerByEmail
-//			Optional<Customer> customer = customerRepo.getCustomerByEmail("mechalie2h@desdev.cn");
+//			Customer customer = customerService.returnCustomerByEmail("rjell2a@utexas.edu");
 //
-//			System.out.println(customer.get());
+//			CreateOrderRequest createOrderRequest = new CreateOrderRequest();
+//			createOrderRequest.setCustomerId(customer.getId());
 //
-			//getProductbyName
-//			Optional<Product> product = productRepo.getProductByName("Pork - Bacon Cooked Slcd");
 //
-//			System.out.println(product);
-
-
-			//findallCustomers
-
-//			List<Customer> customers = customerRepo.findAll();
 //
-//			for (Customer m : customers){
-//				System.out.println(m);
-//			}
-
-//			//findAllProducts
-//			List<Product> products = productRepo.findAll();
+//			Optional<Product> product = productRepo.getProductByName("Mushrooms - Honey");
 //
-//			for (Product p :products){
-//				System.out.println(p);
-//			}
-
-
-			//saveCustomer
-//			Customer customer = new Customer("andreipopescu@gmail.com","andreipopescu@gmail.com2023","Andrei Popescu");
-
-//			customerRepo.save(customer);
-
-//			Optional<Product> product = productRepo.getProductByName("Glass Clear 8 Oz");
-
-
-			//add OrderDetails
-
-//			Date date = new Date(2022,2,2);
-//			Order order = new Order(1900,date);
+//			ProductCardRequest productCardRequest = new ProductCardRequest(5,20);
+//			ProductCardRequest productCardRequest1 = new ProductCardRequest(10,4);
 //
-//			customer.addOrder(order);
+//			List<ProductCardRequest> products = new ArrayList<>();
+//			products.add(productCardRequest);
+//			products.add(productCardRequest1);
 //
-//			OrderDetail orderDetail = new OrderDetail(1900,4,order,product.get());
+//			createOrderRequest.setProductCardRequests(products);
 //
-//			order.addOrderDetails(orderDetail);
+//			customerService.addOrder(createOrderRequest);
 
-
-			//addCustomer
-
-//			CustomerDTO customer1 = new CustomerDTO("cristianpopescu@gmail.com","cristianpopescu@gmail.com2023","Cristian Popescu");
-//
-//			customerService.addCustomer(customer1);
-//
-//		  //removeCustomer
-//
-//			customerService.removeCustomer(customer1.getEmail());
-
-//			//getCustomerByEmail
-//
-//			Customer customer = customerService.returnCustomerByEmail("andreipopescu@gmail.com");
-//
-//			System.out.println(customer);
 		};
 	}
 }

@@ -3,12 +3,15 @@ package ro.myclass.onlineStoreapi.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,28 +38,25 @@ public class Order {
     )
     private Long id;
 
-    @Column(name = "ammount",
-    nullable = false,
-    columnDefinition = "DOUBLE")
-    private double ammount;
     @Column(name = "order_date",
     nullable = false,
     columnDefinition = "DATE")
-    private Date orderDate;
+    private LocalDate orderDate;
 
     @Override
     public String toString(){
-        return id+","+ammount+","+orderDate;
+        return id+","       +","+orderDate;
     }
 
 
     @OneToMany(
-            mappedBy = "order",
+            mappedBy = "sorder",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
     @JsonManagedReference
+    @Builder.Default
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
     @ManyToOne
@@ -68,17 +68,19 @@ public class Order {
     private Customer customer;
 
 
-   public void addOrderDetails(OrderDetail m){
-     orderDetails.add(m);
-       m.setOrder(this);
+   public void addOrderDetails(OrderDetail orderDetail){
+
+       orderDetails.add(orderDetail);
+
+       orderDetail.setOrder(this);
+
    }
 
    public void eraseOrderDetails(OrderDetail orderDetail){
       orderDetails.remove(orderDetail);
    }
 
-    public Order(double ammount, Date orderDate) {
-        this.ammount = ammount;
-        this.orderDate = orderDate;
-    }
+
+
+
 }

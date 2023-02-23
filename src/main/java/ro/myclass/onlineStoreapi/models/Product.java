@@ -82,13 +82,6 @@ public class Product {
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
 
-    public Product(String name, double price, String image, int stock, List<OrderDetail> orderDetails) {
-        this.name = name;
-        this.price = price;
-        this.image = image;
-        this.stock = stock;
-        this.orderDetails = orderDetails;
-    }
 
     public void addOrderDetails(OrderDetail m) {
         orderDetails.add(m);
