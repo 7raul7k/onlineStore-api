@@ -46,8 +46,6 @@ public class OrderDetail {
     private int quantity;
 
 
-
-
     @ManyToOne
     @JoinColumn(name = "order_id",
             referencedColumnName = "id",
@@ -63,10 +61,5 @@ public class OrderDetail {
     @JsonBackReference
     private Product product;
 
-    public OrderDetail(double price, int quantity, Order order, Product product) {
-        this.price = price;
-        this.quantity = quantity;
-        this.order = order;
-        this.product = product;
-    }
+
 }
