@@ -85,7 +85,12 @@ public class CustomerService {
         }
     }
 
+<<<<<<< HEAD
     public Customer returnCustomerByEmail(String email) {
+
+=======
+    public Customer returnCustomerByEmail(String email){
+>>>>>>> task-4-update-dto
         Optional<Customer> customer = this.customerRepo.getCustomerByEmail(email);
         if (customer.isEmpty()) {
             throw new CustomerNotFoundException();
@@ -105,6 +110,7 @@ public class CustomerService {
 
     }
 
+<<<<<<< HEAD
     @Transactional
     @Modifying
     public void addOrder(CreateOrderRequest createOrderRequest) {
@@ -160,5 +166,7 @@ public class CustomerService {
 
     }
 
+=======
+>>>>>>> task-4-update-dto
 
 }
