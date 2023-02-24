@@ -85,7 +85,12 @@ public class CustomerService {
         }
     }
 
+<<<<<<< HEAD
+    public Customer returnCustomerByEmail(String email){
+=======
     public Customer returnCustomerByEmail(String email) {
+
+>>>>>>> eec3cd7ba04b1c7ab96938148f7ae3b28dadc95c
         Optional<Customer> customer = this.customerRepo.getCustomerByEmail(email);
         if (customer.isEmpty()) {
             throw new CustomerNotFoundException();
@@ -105,6 +110,8 @@ public class CustomerService {
 
     }
 
+<<<<<<< HEAD
+=======
     @Transactional
     @Modifying
     public void addOrder(CreateOrderRequest createOrderRequest) {
@@ -160,5 +167,6 @@ public class CustomerService {
 
     }
 
+>>>>>>> eec3cd7ba04b1c7ab96938148f7ae3b28dadc95c
 
 }
