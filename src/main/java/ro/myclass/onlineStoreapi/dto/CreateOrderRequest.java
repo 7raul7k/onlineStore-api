@@ -19,8 +19,6 @@ public class CreateOrderRequest {
     @Min(value = 1)
     private int customerId;
 
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
+    @NonNull
     private List< @Valid ProductCardRequest> productCardRequests;
 }

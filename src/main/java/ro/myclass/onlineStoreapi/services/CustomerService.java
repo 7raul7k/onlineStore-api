@@ -2,11 +2,8 @@ package ro.myclass.onlineStoreapi.services;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
 import ro.myclass.onlineStoreapi.dto.CreateOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CustomerDTO;
-import ro.myclass.onlineStoreapi.dto.ProductCardRequest;
-import ro.myclass.onlineStoreapi.dto.ProductDTO;
 import ro.myclass.onlineStoreapi.exceptions.*;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.models.Order;
@@ -109,7 +106,8 @@ public class CustomerService {
     @Modifying
     public void addOrder(CreateOrderRequest createOrderRequest) {
 
-        Optional<Customer> customer = this.customerRepo.getCustomerById(createOrderRequest.getCustomerId());
+
+        Optional<Customer> customer = this.customerRepo.findById((long) createOrderRequest.getCustomerId());
 
         if (customer.isEmpty()) {
             throw new CustomerNotFoundException();
@@ -157,8 +155,117 @@ public class CustomerService {
         customerRepo.saveAndFlush(customer1);
 
 
+    }
+
+    public Customer getCustomerbyId(long id) {
+        return this.customerRepo.getCustomerById(id).get();
+    }
+
+    public void removeOrder(long customerID, long productID) {
+
+        Optional<Customer> customer = this.customerRepo.findById(customerID);
+
+        if(customer.isEmpty()){
+            throw new CustomerNotFoundException();
+        }
+
+        List<Order> orders = this.orderRepo.getOrderByCustomerId(customerID);
+        int delete = 0;
+        for(Order m : orders){
+         List<OrderDetail> orderDetails = this.orderDetailRepo.getOrderDetailByOrderId(m.getId());
+
+        for(OrderDetail n : orderDetails){
+            if (n.getProduct().getId().equals(productID)) {
+                this.orderDetailRepo.delete(n);
+                delete++;
+            }
+        }
+
+        }
 
     }
+
+
+
+        @Transactional
+        @Modifying
+        public void updateQuantityProduct ( int customerId, int newQuantity, int productId){
+
+            Optional<Customer> customer1 = this.customerRepo.findById((long)customerId);
+
+            if(customer1.isEmpty()){
+                throw new CustomerNotFoundException();
+            }
+
+            Optional<Product> product = this.productRepo.getProductById((long) productId);
+
+            if(product.isEmpty()){
+                throw new ProductNotFoundException();
+            }
+
+            List<Order> orders = this.orderRepo.getOrderByCustomerId(customerId);
+
+            for(Order m : orders){
+
+                Optional<OrderDetail> orderDetail = this.orderDetailRepo.findOrderDetailByProductIdAndOrderId(productId,m.getId());
+
+                if(orderDetail.isEmpty()==false){
+                    if(newQuantity > orderDetail.get().getQuantity()){
+                        int q = newQuantity - orderDetail.get().getQuantity();
+                        orderDetail.get().setQuantity(q);
+                        product.get().setStock(product.get().getStock() - q);
+
+                        double price = product.get().getPrice() * newQuantity;
+
+                        orderDetail.get().setPrice(price);
+
+
+                        productRepo.saveAndFlush(product.get());
+                    }
+                }
+
+            }
+
+
+
+        }
+
+        public List<OrderDetail> orderDetails (int customerId) {
+            Optional<Customer> customer = this.customerRepo.findById((long) customerId);
+
+            if (customer.isEmpty()) {
+                throw new CustomerNotFoundException();
+            }
+            List<Order> order = this.orderRepo.getOrderByCustomerId(customerId);
+
+            List<OrderDetail> orderDetails = new ArrayList<>();
+
+            for(Order m : order){
+                List<OrderDetail> list = this.returnAllOrdersDetailbyOrderId((long) m.getId());
+
+                orderDetails.addAll(list);
+            }
+
+            return orderDetails;
+
+        }
+
+        public List<OrderDetail> returnAllOrdersDetailbyOrderId(long customerId){
+
+       List<Order> orders = this.orderRepo.getOrderByCustomerId(customerId);
+
+       List<OrderDetail> orderDetails = new ArrayList<>();
+       for(Order m : orders){
+          List<OrderDetail> list = m.getOrderDetails();
+
+          orderDetails.addAll(list);
+
+       }
+
+       return orderDetails;
+        }
+
+
 
 
 }

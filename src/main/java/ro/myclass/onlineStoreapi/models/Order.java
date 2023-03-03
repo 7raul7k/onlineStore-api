@@ -50,7 +50,7 @@ public class Order {
 
 
     @OneToMany(
-            mappedBy = "sorder",
+            mappedBy = "order",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER

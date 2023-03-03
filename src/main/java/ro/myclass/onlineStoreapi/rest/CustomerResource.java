@@ -1,15 +1,19 @@
 package ro.myclass.onlineStoreapi.rest;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ro.myclass.onlineStoreapi.dto.CreateOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CreateOrderResponse;
 import ro.myclass.onlineStoreapi.dto.CustomerDTO;
 import ro.myclass.onlineStoreapi.dto.ProductCardRequest;
 import ro.myclass.onlineStoreapi.models.Customer;
+import ro.myclass.onlineStoreapi.models.OrderDetail;
 import ro.myclass.onlineStoreapi.models.Product;
 import ro.myclass.onlineStoreapi.services.CustomerService;
 import ro.myclass.onlineStoreapi.services.ProductService;
@@ -19,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping( value = "/api/v1/customer",consumes = "application/json")
+@RequestMapping( value = "/api/v1/customer")
 public class CustomerResource {
     private CustomerService customerService;
 
@@ -58,26 +62,66 @@ public class CustomerResource {
         return new ResponseEntity<>(customerList,HttpStatus.OK);
  }
 
- @PostMapping( "/addOrder")
-    public ResponseEntity<CreateOrderResponse> addOrder(@RequestParam String email,@RequestParam String productName,@RequestParam  int quantity){
-     //todo: fara dto
+    @PostMapping(path = "/addOrder/{id}")
+    public ResponseEntity<CreateOrderResponse> addOrder(@PathVariable int id,@Valid @RequestBody List<ProductCardRequest> productCardRequest) throws JsonProcessingException {
 
-     Customer customer = this.customerService.returnCustomerByEmail(email);
-     Product product = this.productService.getProductbyName(productName);
-     ProductCardRequest productCardRequest = new ProductCardRequest(Math.toIntExact(product.getId()),quantity);
 
-     List<ProductCardRequest> products = new ArrayList<>();
-     products.add(productCardRequest);
 
-     CreateOrderRequest createOrderRequest = CreateOrderRequest.builder().customerId(Math.toIntExact(customer.getId()))
-             .productCardRequests(products)
+     CreateOrderRequest createOrderRequest = CreateOrderRequest.builder().productCardRequests(productCardRequest)
+             .customerId(id)
              .build();
 
 
+
+     CreateOrderResponse createOrderResponse = CreateOrderResponse.builder().message("adaugat cu succes!")
+             .build();
+
      this.customerService.addOrder(createOrderRequest);
-        return new ResponseEntity<>(new CreateOrderResponse("adaugat cu succes"),HttpStatus.OK);
+
+     return ResponseEntity.ok(createOrderResponse);
 
  }
 
 
+    @DeleteMapping(path = "/deleteOrder/{customerId}",consumes = MediaType.ALL_VALUE, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<CreateOrderResponse> deleteOrder(@PathVariable int customerId,@RequestParam int productId){
+
+        this.customerService.removeOrder((long )customerId,(long)productId);
+
+        CreateOrderResponse createOrderResponse = CreateOrderResponse.builder().message("sters cu succes!")
+                .build();
+
+        return new ResponseEntity<>(createOrderResponse, HttpStatus.CREATED);
+    }
+
+   @GetMapping("/updateQuantityProduct/{customerId}")
+   public ResponseEntity<CreateOrderResponse> updateQuantity(@PathVariable int customerId,@RequestParam int quantity,@RequestParam int productID){
+     this.customerService.updateQuantityProduct(customerId,quantity,productID);
+
+     return new ResponseEntity<>(new CreateOrderResponse("cantitatea  a fost actualizata!"),HttpStatus.OK);
+    }
+
+    @GetMapping("/getOrderDetails/{customerId}")
+        public ResponseEntity<List<OrderDetail>> getOrderDetails ( @PathVariable int customerId){
+            List<OrderDetail> orderDetails = this.customerService.returnAllOrdersDetailbyOrderId(customerId);
+
+            return new ResponseEntity<>(orderDetails,HttpStatus.OK);
+        }
 }
+
+
+//@PostMapping("/{customerId}")
+//public ResponseEntity<CreateOrderResponse> addOrder(@PathVariable int customerId, ArrayList<ProductCardRequest> productCardRequests){
+//
+//        Customer customer = this.customerService.getCustomerbyId(customerId);
+//        CreateOrderRequest createOrderRequest = new CreateOrderRequest((int)customerId,productCardRequests);
+//
+//        this.customerService.addOrder(createOrderRequest);
+//    return new ResponseEntity<>(new CreateOrderResponse("adaugat cu succes!"),HttpStatus.OK);
+//
+//    }
+//}
+
+//todo:check error with list ?????
+
+
