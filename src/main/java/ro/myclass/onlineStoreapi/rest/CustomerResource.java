@@ -107,20 +107,17 @@ public class CustomerResource {
 
             return new ResponseEntity<>(orderDetails,HttpStatus.OK);
         }
+@PostMapping("/{customerId}")
+public ResponseEntity<CreateOrderResponse> addOrder(@RequestBody CreateOrderRequest createOrderRequest){
+
+
+
+        this.customerService.addOrder(createOrderRequest);
+    return new ResponseEntity<>(new CreateOrderResponse("adaugat cu succes!"),HttpStatus.OK);
+
+    }
 }
 
-
-//@PostMapping("/{customerId}")
-//public ResponseEntity<CreateOrderResponse> addOrder(@PathVariable int customerId, ArrayList<ProductCardRequest> productCardRequests){
-//
-//        Customer customer = this.customerService.getCustomerbyId(customerId);
-//        CreateOrderRequest createOrderRequest = new CreateOrderRequest((int)customerId,productCardRequests);
-//
-//        this.customerService.addOrder(createOrderRequest);
-//    return new ResponseEntity<>(new CreateOrderResponse("adaugat cu succes!"),HttpStatus.OK);
-//
-//    }
-//}
 
 //todo:check error with list ?????
 
