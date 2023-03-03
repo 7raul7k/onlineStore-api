@@ -67,4 +67,14 @@ public class ProductService {
         return this.productRepo.getProductByName(name).get();
     }
 
+    public List<Product> getAllProductFromOrder(int orderId){
+        List<Product> products = this.productRepo.getAllProductsFromOrder((long) orderId);
+
+        if(products.isEmpty()){
+            throw new ListEmptyException();
+        }
+
+        return products;
+    }
+
 }

@@ -64,6 +64,7 @@ public class Order {
             name = "customer_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "customer_id_fk"))
+
     @JsonBackReference(value = "test1")
     private Customer customer;
 

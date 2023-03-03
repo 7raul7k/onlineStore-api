@@ -21,4 +21,7 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
     @Query("select p from Product p where p.id = ?1")
     Optional<Product> getProductById(long id);
 
+    @Query("select p from Product  p where p.id in (select od.product.id from OrderDetail  od where  od.order.id = ?1)")
+    List<Product> getAllProductsFromOrder(long orderId);
+
 }

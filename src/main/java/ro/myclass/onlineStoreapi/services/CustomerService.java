@@ -2,6 +2,7 @@ package ro.myclass.onlineStoreapi.services;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import ro.myclass.onlineStoreapi.dto.CancelOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CreateOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CustomerDTO;
 import ro.myclass.onlineStoreapi.exceptions.*;
@@ -161,29 +162,34 @@ public class CustomerService {
         return this.customerRepo.getCustomerById(id).get();
     }
 
-    public void removeOrder(long customerID, long productID) {
+    public void cancelOrder(CancelOrderRequest cancelOrderRequest) {
 
-        Optional<Customer> customer = this.customerRepo.findById(customerID);
+       Optional<Customer> customerOptional = this.customerRepo.getCustomerById(cancelOrderRequest.getCustomerId());
 
-        if(customer.isEmpty()){
-            throw new CustomerNotFoundException();
-        }
+       if(customerOptional.isEmpty()){
+           throw new CustomerNotFoundException();
+       }
 
-        List<Order> orders = this.orderRepo.getOrderByCustomerId(customerID);
-        int delete = 0;
-        for(Order m : orders){
-         List<OrderDetail> orderDetails = this.orderDetailRepo.getOrderDetailByOrderId(m.getId());
+       Customer customer = customerOptional.get();
 
-        for(OrderDetail n : orderDetails){
-            if (n.getProduct().getId().equals(productID)) {
-                this.orderDetailRepo.delete(n);
-                delete++;
-            }
-        }
+       List<Order> orders = this.orderRepo.getOrderByCustomerId(customer.getId());
 
-        }
+       for(Order m : orders){
+
+           List<Product> products = this.productRepo.getAllProductsFromOrder(m.getId());
+
+           if(products.isEmpty()==false){
+
+               this.orderRepo.delete(m);
+               customer.eraseOrder(m);
+
+           }
+
+       }
+
 
     }
+
 
 
 

@@ -52,6 +52,12 @@ public class OnlineStoreApiApplication {
 //
 //			customerService.addOrder(createOrderRequest);
 
+//			List<Product> products = productRepo.getAllProductsFromOrder(1);
+//
+//			products.stream().forEach((k) ->{
+//
+//				System.out.println(k);
+//			});
 		};
 	}
 }
