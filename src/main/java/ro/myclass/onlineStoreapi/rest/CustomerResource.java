@@ -59,14 +59,7 @@ public class CustomerResource {
         return new ResponseEntity<>(customerList,HttpStatus.OK);
  }
 
-    @DeleteMapping(path = "/deleteProduct")
-    public ResponseEntity<CreateOrderResponse> deleteOrder(@RequestBody CancelOrderRequest orderRequest){
-      this.customerService.cancelOrder(orderRequest);
 
-        return new ResponseEntity<>(new CreateOrderResponse("sters cu succes!"),HttpStatus.OK);
-
-
-    }
 
    @GetMapping("/updateQuantityProduct/{customerId}")
    public ResponseEntity<CreateOrderResponse> updateQuantity(@PathVariable int customerId,@RequestParam int quantity,@RequestParam int productID){

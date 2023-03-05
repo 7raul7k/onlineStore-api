@@ -60,11 +60,11 @@ public class OnlineStoreApiApplication {
 //				System.out.println(k);
 //			});
 
-			CancelOrderRequest cancelOrderRequest = CancelOrderRequest.builder().customerId(20)
-							.orderId(4)
-									.build();
-
-			customerService.cancelOrder(cancelOrderRequest);
+//			CancelOrderRequest cancelOrderRequest = CancelOrderRequest.builder().customerId(20)
+//							.orderId(4)
+//									.build();
+//
+//			customerService.cancelOrder(cancelOrderRequest);
 
 		};
 	}

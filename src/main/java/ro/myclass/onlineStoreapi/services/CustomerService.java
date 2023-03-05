@@ -143,9 +143,11 @@ public class CustomerService {
                     order.addOrderDetails(orderDetail);
                     this.productRepo.save(product1);
                 } else {
-                    throw new StockNotAvailableException();
+                    throw new StockNotAvailableException(product.get().getName());
                 }
 
+            }else{
+                throw new ProductNotFoundException(obj.getProductId());
             }
 
 
@@ -208,7 +210,7 @@ public class CustomerService {
             Optional<Product> product = this.productRepo.getProductById((long) productId);
 
             if(product.isEmpty()){
-                throw new ProductNotFoundException();
+                throw new ProductNotFoundException(productId);
             }
 
             List<Order> orders = this.orderRepo.getOrderByCustomerId(customerId);
