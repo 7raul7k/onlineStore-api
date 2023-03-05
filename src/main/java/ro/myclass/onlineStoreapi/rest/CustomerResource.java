@@ -3,6 +3,7 @@ package ro.myclass.onlineStoreapi.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping( value = "/api/v1/customer")
+@Slf4j
 public class CustomerResource {
     private CustomerService customerService;
 
@@ -33,6 +35,8 @@ public class CustomerResource {
 
  @PostMapping("/addCustomer")
     public ResponseEntity<String> addCustomer(@RequestBody CustomerDTO customer){
+
+    
         this.customerService.addCustomer(customer);
 
         return new ResponseEntity<>("Customer was added!", HttpStatus.ACCEPTED);
