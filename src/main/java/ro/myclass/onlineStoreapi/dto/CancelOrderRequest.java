@@ -17,5 +17,7 @@ public class CancelOrderRequest {
 
     private int customerId;
 
+    private int orderId;
+
 
 }

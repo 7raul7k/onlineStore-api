@@ -162,6 +162,9 @@ public class CustomerService {
         return this.customerRepo.getCustomerById(id).get();
     }
 
+
+    @Transactional
+    @Modifying
     public void cancelOrder(CancelOrderRequest cancelOrderRequest) {
 
        Optional<Customer> customerOptional = this.customerRepo.getCustomerById(cancelOrderRequest.getCustomerId());
@@ -171,22 +174,21 @@ public class CustomerService {
        }
 
        Customer customer = customerOptional.get();
+       Order order =customer.getOrder(cancelOrderRequest.getOrderId());
 
-       List<Order> orders = this.orderRepo.getOrderByCustomerId(customer.getId());
 
-       for(Order m : orders){
+       //todo:logica de update al stocului
+        order.getOrderDetails().forEach(od->{
+            Product product= productRepo.getProductById(od.getProduct().getId()).get();
+            product.setStock(product.getStock()+od.getQuantity());
+            productRepo.saveAndFlush(product);
+        });
 
-           List<Product> products = this.productRepo.getAllProductsFromOrder(m.getId());
 
-           if(products.isEmpty()==false){
+        customer.getOrders().remove(order);
 
-               this.orderRepo.delete(m);
-               customer.eraseOrder(m);
 
-           }
-
-       }
-
+        customerRepo.saveAndFlush(customer);
 
     }
 
