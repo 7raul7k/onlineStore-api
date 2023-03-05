@@ -6,10 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import ro.myclass.onlineStoreapi.exceptions.OrderNotFoundException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,4 +86,18 @@ public class Customer {
     public void eraseOrder(Order order){
        orders.remove(order);
     }
+
+    public Order getOrder(int orderId){
+
+        Order order=Order.builder().id((long) orderId).customer(this).orderDate(LocalDate.now()).build();
+
+        if(  this.orders.contains(order)){
+
+            return  this.orders.get(this.orders.indexOf(order));
+        }
+
+        return  null;
+
+    }
+
 }

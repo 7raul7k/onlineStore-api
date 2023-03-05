@@ -2,7 +2,7 @@ package ro.myclass.onlineStoreapi.exceptions;
 
 public class StockNotAvailableException extends RuntimeException {
 
-    public StockNotAvailableException() {
-        super("Stock not available !");
+    public StockNotAvailableException(String productName) {
+        super(productName + " stock is not available !");
     }
 }

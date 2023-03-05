@@ -68,6 +68,11 @@ public class Order {
     @JsonBackReference(value = "test1")
     private Customer customer;
 
+    @Override
+    public boolean equals(Object obj){
+        return  this.getId().equals(((Order) obj).getId());
+    }
+
 
    public void addOrderDetails(OrderDetail orderDetail){
 

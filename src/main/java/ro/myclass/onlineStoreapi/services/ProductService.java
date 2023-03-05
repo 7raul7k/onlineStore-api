@@ -57,7 +57,7 @@ public class ProductService {
         Optional<Product> product = this.productRepo.getProductByName(name);
 
         if(product.isEmpty()){
-            throw new ProductNotFoundException();
+            throw new ProductNotFoundException(Math.toIntExact(product.get().getId()));
         }else{
             this.productRepo.delete(product.get());
         }

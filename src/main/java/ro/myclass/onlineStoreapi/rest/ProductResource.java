@@ -3,8 +3,11 @@ package ro.myclass.onlineStoreapi.rest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ro.myclass.onlineStoreapi.dto.CancelOrderRequest;
+import ro.myclass.onlineStoreapi.dto.CreateOrderResponse;
 import ro.myclass.onlineStoreapi.dto.ProductDTO;
 import ro.myclass.onlineStoreapi.models.Product;
+import ro.myclass.onlineStoreapi.services.CustomerService;
 import ro.myclass.onlineStoreapi.services.ProductService;
 
 import java.util.List;
@@ -13,10 +16,12 @@ import java.util.List;
 @RequestMapping("/api/v1/product")
 public class ProductResource {
 
+    CustomerService customerService;
     private ProductService productService;
 
-    public ProductResource(ProductService productService) {
+    public ProductResource(ProductService productService,CustomerService customerService) {
         this.productService = productService;
+        this.customerService = customerService;
     }
 
     @GetMapping("/getAllProducts")
@@ -46,6 +51,15 @@ public class ProductResource {
         Product product = this.productService.getProductbyName(name);
 
         return new ResponseEntity<>(product,HttpStatus.OK);
+
+    }
+
+    @DeleteMapping(path = "/cancelOrder")
+    public ResponseEntity<CreateOrderResponse> deleteOrder(@RequestBody CancelOrderRequest orderRequest){
+        this.customerService.cancelOrder(orderRequest);
+
+        return new ResponseEntity<>(new CreateOrderResponse("sters cu succes!"),HttpStatus.OK);
+
 
     }
 

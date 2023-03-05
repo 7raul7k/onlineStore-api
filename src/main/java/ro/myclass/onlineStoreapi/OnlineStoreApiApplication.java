@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import ro.myclass.onlineStoreapi.dto.CancelOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CreateOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CustomerDTO;
 import ro.myclass.onlineStoreapi.dto.ProductCardRequest;
@@ -58,6 +59,13 @@ public class OnlineStoreApiApplication {
 //
 //				System.out.println(k);
 //			});
+
+//			CancelOrderRequest cancelOrderRequest = CancelOrderRequest.builder().customerId(20)
+//							.orderId(4)
+//									.build();
+//
+//			customerService.cancelOrder(cancelOrderRequest);
+
 		};
 	}
 }
