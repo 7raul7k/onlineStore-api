@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import ro.myclass.onlineStoreapi.models.Order;
 import ro.myclass.onlineStoreapi.models.OrderDetail;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,7 @@ public interface OrderRepo extends JpaRepository<Order,Long> {
     List<Order> getOrderByCustomerId(long customerId);
 
    @Query("select o from Order o where o.customer.email = ?1 and o.orderDate = ?2")
-   Optional<Order> getOrderByCustomerEmailAndOrderDate(String email, Date order);
+   Optional<Order> getOrderByCustomerEmailAndOrderDate(String email, LocalDate order);
 
    @Query("select o from Order o where o.customer.id = ?1 and o.id = ?2")
    Optional<Order> getOrderByCustomerIdAndAndId(long customerId, long orderId);
