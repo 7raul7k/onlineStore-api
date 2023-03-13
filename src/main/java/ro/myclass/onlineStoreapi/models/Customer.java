@@ -3,6 +3,7 @@ package ro.myclass.onlineStoreapi.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -68,8 +69,8 @@ public class Customer {
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
-    @JsonManagedReference(value = "test1")
-
+    @JsonManagedReference(value = "test10")
+    @Builder.Default
     private List<Order> orders = new ArrayList<>();
 
     public Customer(String email, String password, String fullName) {
@@ -79,8 +80,9 @@ public class Customer {
     }
 
     public void addOrder(Order order){
-        orders.add(order);
         order.setCustomer(this);
+        orders.add(order);
+
     }
 
     public void eraseOrder(Order order){

@@ -19,8 +19,10 @@ public interface OrderDetailRepo extends JpaRepository<OrderDetail,Long> {
     Optional<OrderDetail> findOrderDetailByProductIdAndOrderId(long productId, long orderID);
 
 
-    @Query("select o from OrderDetail o where o.order.id = ?1")
-    List<OrderDetail> getOrderDetailByOrderId(long orderId);
+
+
+    @Query("select o from OrderDetail o where o.product.id = ?1 and o.price = ?2")
+    Optional<OrderDetail> getOrderDetailByProductIdAndPrice(long productId, double price);
 
 
 
