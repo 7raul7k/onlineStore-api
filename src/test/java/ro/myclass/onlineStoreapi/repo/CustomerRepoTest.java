@@ -30,6 +30,7 @@ class CustomerRepoTest {
     }
 
 
+
     @Test
     public void getCustomerByEmail(){
         CustomerDTO customerDTO = new CustomerDTO("popescuvlad@gmail.com","popescuvlad@gmail.com2023","Popescu Vlad");
@@ -75,10 +76,9 @@ class CustomerRepoTest {
 
     @Test
     public void getCustomerById(){
-        CustomerDTO customerDTO = new CustomerDTO("popescuvlad@gmail.com","popescuvlad@gmail.com2023","Popescu Vlad");
-        Customer customer = Customer.builder().fullName(customerDTO.getFullName())
-                .email(customerDTO.getEmail())
-                .password(customerDTO.getPassword())
+        Customer customer = Customer.builder().fullName("Popescu Vlad")
+                .email("popescuvlad@gmail.com")
+                .password("popescuvlad@gmail.com2023")
                 .build();
        customerRepo.save(customer);
 

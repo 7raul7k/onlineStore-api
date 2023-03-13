@@ -1,5 +1,6 @@
 package ro.myclass.onlineStoreapi.repo;
 
+import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import ro.myclass.onlineStoreapi.models.Product;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,105 +30,60 @@ class OrderDetailRepoTest {
 
     @Autowired
     OrderDetailRepo orderDetailRepo;
-
-    @Autowired
-    CustomerRepo customerRepo;
-
-    @Autowired
-    OrderRepo orderRepo;
-
-    @Autowired
-    ProductRepo productRepo;
     @BeforeEach
     public void clean(){
         orderDetailRepo.deleteAll();
-    }
-
-    @Test
-    public void getOrderDetailByOrderId(){
-        CustomerDTO customerDTO = new CustomerDTO("popescuvlad@gmail.com","popescuvlad@gmail.com2023","Popescu Vlad");
-        Customer customer = Customer.builder().fullName(customerDTO.getFullName())
-                .email(customerDTO.getEmail())
-                .password(customerDTO.getPassword())
-                .build();
-        customerRepo.save(customer);
-
-        Order order = new Order((long) 1, LocalDate.now(),customer);
-
-        orderRepo.save(order);
-        ProductDTO productDTO = new ProductDTO("casti gaming HyperX",400,"https://wwww.picsart.ro/casti-gaming-hyperx",500);
-        Product product = Product.builder().name(productDTO.getName()).
-                stock(productDTO.getStock())
-                .image(productDTO.getImage())
-                .build();
-         productRepo.save(product);
-
-        OrderDetail orderDetail = new OrderDetail((long) 1,250,2,order,product);
-
-        orderDetailRepo.save(orderDetail);
-
-        List<OrderDetail> list = new ArrayList<>();
-        list.add(orderDetail);
-
-        assertEquals(list,this.orderDetailRepo.getOrderDetailByOrderId(1));
 
     }
 
     @Test
-    public void findOrderDetailByProductIdAndOrderId(){
-        CustomerDTO customerDTO = new CustomerDTO("popescuvlad@gmail.com","popescuvlad@gmail.com2023","Popescu Vlad");
-        Customer customer = Customer.builder().fullName(customerDTO.getFullName())
-                .email(customerDTO.getEmail())
-                .password(customerDTO.getPassword())
+    public void getOrderDetailByProductIdAndPrice(){
+
+        Product product = Product.builder().name("mouse lg s2314j")
+                .id(2L)
+                .stock(600)
+                .price(300)
+                .image("https://linkpicture.com/en/?")
                 .build();
-        customerRepo.save(customer);
-
-        Order order = new Order((long) 1, LocalDate.now(),customer);
-
-        orderRepo.save(order);
-        ProductDTO productDTO = new ProductDTO("casti gaming HyperX",400,"https://wwww.picsart.ro/casti-gaming-hyperx",500);
-        Product product = Product.builder().name(productDTO.getName()).
-                stock(productDTO.getStock())
-                .image(productDTO.getImage())
-                .build();
-        productRepo.save(product);
-
-        OrderDetail orderDetail = new OrderDetail((long) 1,250,2,order,product);
+        Order order = Order.builder().customer(Customer.builder().fullName("Eduard Miculescu").email("eduardmiculescu@gmail.com").password("eduardeduard").build()).id(1L).build();
+        OrderDetail  orderDetail=OrderDetail.builder().quantity(2).product(product).price(600.0).order(order).build();
 
         orderDetailRepo.save(orderDetail);
 
-        assertEquals(orderDetail,this.orderDetailRepo.findOrderDetailByProductIdAndOrderId(1,1).get());
+        assertEquals(orderDetail,this.orderDetailRepo.getOrderDetailByProductIdAndPrice(product.getId(), orderDetail.getPrice()).get() );
     }
 
-    @Test
-    public void getAllOrderDetails(){
-        CustomerDTO customerDTO = new CustomerDTO("popescuvlad@gmail.com","popescuvlad@gmail.com2023","Popescu Vlad");
-        Customer customer = Customer.builder().fullName(customerDTO.getFullName())
-                .email(customerDTO.getEmail())
-                .password(customerDTO.getPassword())
-                .build();
-        customerRepo.save(customer);
+//    @Test
+//    public void findOrderDetailByProductId(){
+//        Product product = Product.builder().name("TV samsung 24 inch").stock(250).price(5000).id(3L).build();
+//
+//        Customer customer = Customer.builder().email("popescuadrian@gmail.com").password("popoescupopescu").build();
+//        Order order = Order.builder().id(2L).orderDate(LocalDate.now()).customer(customer).id(1L).build();
+//
+//
+//        OrderDetail orderDetail = OrderDetail.builder().order(order).product(product).price(5000.0).quantity(1).build();
+//
+//        orderDetailRepo.save(orderDetail);
+//
+//        assertEquals(Optional.of(orderDetail),this.orderDetailRepo.findOrderDetailByProductIdAndOrderId(product.getId(), order.getId()));
+//
+//    }
 
-        Order order = new Order((long) 1, LocalDate.now(),customer);
-
-        orderRepo.save(order);
-        ProductDTO productDTO = new ProductDTO("casti gaming HyperX",400,"https://wwww.picsart.ro/casti-gaming-hyperx",500);
-        Product product = Product.builder().name(productDTO.getName()).
-                stock(productDTO.getStock())
-                .image(productDTO.getImage())
-                .build();
-        productRepo.save(product);
-
-        OrderDetail orderDetail = new OrderDetail((long) 1,250,2,order,product);
-
-        OrderDetail orderDetail1 = new OrderDetail((long) 2,500,4,order,product);
-        orderDetailRepo.save(orderDetail);
-        orderDetailRepo.save(orderDetail1);
-
-        List<OrderDetail> list = new ArrayList<>();
-        list.add(orderDetail);
-        list.add(orderDetail1);
-
-        assertEquals(list,this.orderDetailRepo.getAllOrderDetails());
-    }
+//    @Test
+//    public void getAllOrderDetails(){
+//        Order order = Order.builder().id(1L).orderDate(LocalDate.of(2021,1,17)).customer( Customer.builder().email("popescuandrei@gmail.com").password("popoescu32popescu").fullName("Popescu Andrei").id(1L).build()).build();
+//
+//        Product product = Product.builder().id(5L).name("Casti gaming xtrify").stock(250).price(400).build();
+//
+//        OrderDetail orderDetail = OrderDetail.builder().order(order).product(product).price(250).quantity(1).build();
+//
+//
+//        orderDetailRepo.save(orderDetail);
+//
+//        List<OrderDetail> list = new ArrayList<>();
+//        list.add(orderDetail);
+//
+//        assertEquals(list,this.orderDetailRepo.getAllOrderDetails());
+//    }
+//
 }

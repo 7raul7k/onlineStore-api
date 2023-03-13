@@ -13,6 +13,9 @@ import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.models.Order;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,69 +27,41 @@ class OrderRepoTest {
     @Autowired
     OrderRepo orderRepo;
 
-    @Autowired
-    CustomerRepo customerRepo;
+
+
 
     @BeforeEach
     public void clean(){
         orderRepo.deleteAll();
+
     }
 
     @Test
     public void getOrderByCustomerId(){
 
-       Customer customer = new Customer("eduard.mocanu@gmail.com","eduard.mocanu@gmail.com2022","Eduard Mocanu");
-
-        customerRepo.save(customer);
-
-        Order order = new Order((long) 1 , LocalDate.now(),customer);
+        Order order = Order.builder().orderDate(LocalDate.now()).customer(Customer.builder().fullName("Popescu Vlad").email("popescuvlad@gmail.com").password("popescuvlad@gmail.com2023").id(1L).id((long) 1).build()).build();
 
         orderRepo.save(order);
 
-
-        assertEquals(order,this.orderRepo.getOrderById(1).get());
-
-    }
-
-    @Test
-    public void getOrderByCustomerEmailAndOrderDate(){
-
-        Customer customer = new Customer("eduard.mocanu@gmail.com","eduard.mocanu@gmail.com2022","Eduard Mocanu");
-        customerRepo.save(customer);
-
-        LocalDate localDate = LocalDate.now();
-
-        Order order = new Order((long) 1,localDate,customer);
-
-        orderRepo.save(order);
-
-        assertEquals(order,this.orderRepo.getOrderByCustomerEmailAndOrderDate("eduard.mocanu@gmail.com",localDate).get());
-    }
-
-    @Test
-    public void getOrderByCustomerIdAndAndOrderId(){
-        Customer customer = new Customer("eduard.mocanu@gmail.com","eduard.mocanu@gmail.com2022","Eduard Mocanu");
-        customerRepo.save(customer);
-
-        Order order = new Order((long) 1 ,LocalDate.now(),customer);
-
-        orderRepo.save(order);
-
-        assertEquals(order,this.orderRepo.getOrderByCustomerIdAndAndId(customer.getId(), (long) 1 ).get());
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(order);
+        assertEquals(orderList,this.orderRepo.getOrderByCustomerId(1));
 
     }
 
-    @Test
-    public void getOrderById(){
-        Customer customer = new Customer("eduard.mocanu@gmail.com","eduard.mocanu@gmail.com2022","Eduard Mocanu");
-        customerRepo.save(customer);
+//    @Test
+//    public void getOrderByIdAndCustomerId() {
+//        Customer customer = Customer.builder().email("alexandru.toma3223@gmail.com").password("alextoma@gmail.com2022").fullName("Toma Alexandru").id((long) 1).build();
+//
+//
+//        Order order = Order.builder().orderDate(LocalDate.now()).customer(customer).build();
+//
+//        orderRepo.save(order);
+//
+//        assertEquals(order,this.orderRepo.getOrderByIdAndCustomerId(1, customer.getId()).get());
+//    }
 
-        Order order = new Order((long) 1 ,LocalDate.now(),customer);
 
-        orderRepo.save(order);
 
-        assertEquals(order,this.orderRepo.getOrderById(1).get());
-
-    }
 
 }

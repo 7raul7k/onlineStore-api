@@ -45,7 +45,7 @@ public class Order {
 
     @Override
     public String toString(){
-        return id+","       +","+orderDate;
+        return id+"," +","+orderDate;
     }
 
 
@@ -70,8 +70,8 @@ public class Order {
 
     @Override
     public boolean equals(Object obj){
-        Order m = (Order) obj;
-        if(this.getId().equals(m.getId())){
+        Order order = (Order) obj;
+        if(this.getOrderDate().equals(order.getOrderDate())&& this.getCustomer().equals(customer)){
             return true;
         }
         return false;
