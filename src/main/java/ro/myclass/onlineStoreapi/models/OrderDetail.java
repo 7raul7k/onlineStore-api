@@ -50,7 +50,7 @@ public class OrderDetail {
     @JoinColumn(name = "order_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "order_id_fk"))
-    @JsonBackReference
+    @JsonBackReference(value ="od")
     private Order order;
 
     @ManyToOne
@@ -58,7 +58,7 @@ public class OrderDetail {
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "product_id_fk"))
 
-    @JsonBackReference
+    @JsonBackReference(value="od2")
     private Product product;
 
 
