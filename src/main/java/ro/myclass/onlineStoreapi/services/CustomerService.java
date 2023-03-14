@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ro.myclass.onlineStoreapi.dto.CancelOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CreateOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CustomerDTO;
+import ro.myclass.onlineStoreapi.dto.UpdateOrderRequest;
 import ro.myclass.onlineStoreapi.exceptions.*;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.models.Order;
@@ -39,47 +40,30 @@ public class CustomerService {
         this.orderDetailRepo = orderDetailRepo;
         this.productRepo = productRepo;
     }
-
-    public void showAllCustomers() {
-        List<Customer> customerList = this.customerRepo.getAllCustomers();
-
-        if (customerList.isEmpty()) {
-            throw new ListEmptyException();
-        } else {
-            for (Customer m : customerList) {
-                System.out.println(m);
-            }
-        }
-    }
-
     @Transactional
-    public void addCustomer(CustomerDTO customer) {
+    public  boolean addCustomer(CustomerDTO customer) {
         Optional<Customer> optionalCustomer = this.customerRepo.getCustomerByEmail(customer.getEmail());
 
         if (optionalCustomer.isEmpty()) {
-            try {
                 Customer m = new Customer().builder()
                         .email(customer.getEmail())
                         .password(customer.getPassword())
                         .fullName(customer.getFullName())
                         .build();
-
-                this.customerRepo.save(m);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        } else {
+                return true;
+        }else{
             throw new CustomerWasFoundException();
         }
     }
 
-    public void removeCustomer(String email) {
+    public boolean removeCustomer(String email) {
         Optional<Customer> customer = this.customerRepo.getCustomerByEmail(email);
 
         if (customer.isEmpty()) {
             throw new CustomerNotFoundException();
         } else {
             this.customerRepo.delete(customer.get());
+            return true;
         }
     }
 
@@ -105,7 +89,7 @@ public class CustomerService {
 
     @Transactional
     @Modifying
-    public void addOrder(CreateOrderRequest createOrderRequest) {
+    public boolean addOrder(CreateOrderRequest createOrderRequest) {
 
 
         Optional<Customer> customer = this.customerRepo.findById((long) createOrderRequest.getCustomerId());
@@ -156,18 +140,13 @@ public class CustomerService {
         customer1.addOrder(order);
 
         customerRepo.saveAndFlush(customer1);
+        return true;
 
 
     }
-
-    public Customer getCustomerbyId(long id) {
-        return this.customerRepo.getCustomerById(id).get();
-    }
-
-
     @Transactional
     @Modifying
-    public void cancelOrder(CancelOrderRequest cancelOrderRequest) {
+    public boolean cancelOrder(CancelOrderRequest cancelOrderRequest) {
 
        Optional<Customer> customerOptional = this.customerRepo.getCustomerById(cancelOrderRequest.getCustomerId());
 
@@ -191,6 +170,7 @@ public class CustomerService {
 
 
         customerRepo.saveAndFlush(customer);
+        return true;
 
     }
 
@@ -199,76 +179,75 @@ public class CustomerService {
 
         @Transactional
         @Modifying
-        public void updateQuantityProduct ( int customerId, int newQuantity, int productId){
+        public boolean updateQuantityProduct (UpdateOrderRequest updateOrderRequest){
 
-            Optional<Customer> customer1 = this.customerRepo.findById((long)customerId);
+            Optional<Customer> customer1 = this.customerRepo.findById((long)updateOrderRequest.getCustomerId());
 
             if(customer1.isEmpty()){
                 throw new CustomerNotFoundException();
             }
 
-            Optional<Product> product = this.productRepo.getProductById((long) productId);
+           Optional<Product> productOptional = this.productRepo.getProductById(updateOrderRequest.getProductCardRequest().getProductId());
 
-            if(product.isEmpty()){
-                throw new ProductNotFoundException(productId);
+            if(productOptional.isEmpty()){
+                throw new ProductNotFoundException(Math.toIntExact(updateOrderRequest.getProductCardRequest().getProductId()));
             }
+            Customer customer = customer1.get();
+            Order order = customer.getOrder(updateOrderRequest.getOrderId());
 
-            List<Order> orders = this.orderRepo.getOrderByCustomerId(customerId);
+            List<OrderDetail> orderDetailList = order.getOrderDetails();
 
-            for(Order m : orders){
+            Product product = productOptional.get();
+            orderDetailList.stream().forEach(k ->{
+                int productStock= product.getStock();
+                if(k.getProduct().getId() == updateOrderRequest.getProductCardRequest().getProductId()  && productStock > updateOrderRequest.getProductCardRequest().getQuantity() ){
+                if(product.getStock() > updateOrderRequest.getProductCardRequest().getQuantity() ){
 
-                Optional<OrderDetail> orderDetail = this.orderDetailRepo.findOrderDetailByProductIdAndOrderId(productId,m.getId());
+                 int stock = updateOrderRequest.getProductCardRequest().getQuantity() - k.getQuantity();
 
-                if(orderDetail.isEmpty()==false){
-                    if(newQuantity > orderDetail.get().getQuantity()){
-                        int q = newQuantity - orderDetail.get().getQuantity();
-                        orderDetail.get().setQuantity(q);
-                        product.get().setStock(product.get().getStock() - q);
+                    product.setStock(product.getStock()- stock);
 
-                        double price = product.get().getPrice() * newQuantity;
+                    k.setQuantity(updateOrderRequest.getProductCardRequest().getQuantity());
 
-                        orderDetail.get().setPrice(price);
+                }else if(product.getStock() > updateOrderRequest.getProductCardRequest().getQuantity() ) {
 
 
-                        productRepo.saveAndFlush(product.get());
-                    }
+                    int stock = k.getQuantity() - updateOrderRequest.getProductCardRequest().getQuantity();
+
+                    product.setStock(product.getStock() + stock);
+
+                    k.setQuantity(stock);
+
+                    orderDetailRepo.saveAndFlush(k);
                 }
 
-            }
+                }else if (k.getProduct().getId() == updateOrderRequest.getProductCardRequest().getProductId() && productStock < updateOrderRequest.getProductCardRequest().getQuantity()){
+                    throw new StockNotAvailableException(product.getName());
+                }
 
+            });
 
-
-        }
-
-        public List<OrderDetail> orderDetails (int customerId) {
-            Optional<Customer> customer = this.customerRepo.findById((long) customerId);
-
-            if (customer.isEmpty()) {
-                throw new CustomerNotFoundException();
-            }
-            List<Order> order = this.orderRepo.getOrderByCustomerId(customerId);
-
-            List<OrderDetail> orderDetails = new ArrayList<>();
-
-            for(Order m : order){
-                List<OrderDetail> list = this.returnAllOrdersDetailbyOrderId((long) m.getId());
-
-                orderDetails.addAll(list);
-            }
-
-            return orderDetails;
+            return true;
 
         }
+
+
 
         public List<OrderDetail> returnAllOrdersDetailbyOrderId(long customerId){
 
        List<Order> orders = this.orderRepo.getOrderByCustomerId(customerId);
 
+       if(orders.isEmpty()){
+           throw new ListEmptyException();
+       }
+
        List<OrderDetail> orderDetails = new ArrayList<>();
        for(Order m : orders){
           List<OrderDetail> list = m.getOrderDetails();
 
-          orderDetails.addAll(list);
+          list.stream().forEach((k)->{
+              orderDetails.add(k);
+          });
 
        }
 
