@@ -131,7 +131,7 @@ public class CustomerService {
                 }
 
             }else{
-                throw new ProductNotFoundException(obj.getProductId());
+                throw new ProductNotFoundException();
             }
 
 
@@ -190,7 +190,7 @@ public class CustomerService {
            Optional<Product> productOptional = this.productRepo.getProductById(updateOrderRequest.getProductCardRequest().getProductId());
 
             if(productOptional.isEmpty()){
-                throw new ProductNotFoundException(Math.toIntExact(updateOrderRequest.getProductCardRequest().getProductId()));
+                throw new ProductNotFoundException();
             }
             Customer customer = customer1.get();
             Order order = customer.getOrder(updateOrderRequest.getOrderId());
