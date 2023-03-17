@@ -34,7 +34,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void addProduct(ProductDTO productDTO){
+    public boolean addProduct(ProductDTO productDTO){
         Optional<Product> product = this.productRepo.getProductByName(productDTO.getName());
 
         if(product.isEmpty()){
@@ -45,6 +45,7 @@ public class ProductService {
                     .build();
 
             this.productRepo.save(m);
+            return true;
         }else{
             throw new ProductWasFoundException();
         }
@@ -53,28 +54,27 @@ public class ProductService {
 
     @Transactional
     @Modifying
-    public void deleteProduct(String name){
+    public boolean deleteProduct(String name){
         Optional<Product> product = this.productRepo.getProductByName(name);
 
         if(product.isEmpty()){
-            throw new ProductNotFoundException(Math.toIntExact(product.get().getId()));
+            throw new ProductNotFoundException();
         }else{
             this.productRepo.delete(product.get());
+            return true;
         }
     }
 
     public Product getProductbyName(String name){
-        return this.productRepo.getProductByName(name).get();
-    }
 
-    public List<Product> getAllProductFromOrder(int orderId){
-        List<Product> products = this.productRepo.getAllProductsFromOrder((long) orderId);
-
-        if(products.isEmpty()){
-            throw new ListEmptyException();
+        Optional<Product> product = this.productRepo.getProductByName(name);
+        if(product.isEmpty()){
+            throw new ProductNotFoundException();
         }
+        return this.productRepo.getProductByName(name).get();
 
-        return products;
     }
+
+
 
 }
