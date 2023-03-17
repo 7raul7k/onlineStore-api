@@ -5,19 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class ProductDTO {
+public class UpdateOrderRequest {
 
-    @NotEmpty
- private String name;
-    private double price;
-    @NotEmpty
-    private String image;
-    private int stock;
-
+    int customerId;
+    int orderId;
+    ProductCardRequest productCardRequest;
 }
