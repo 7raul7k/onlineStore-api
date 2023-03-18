@@ -38,7 +38,7 @@ public class ProductService {
         Optional<Product> product = this.productRepo.getProductByName(productDTO.getName());
 
         if(product.isEmpty()){
-            Product m = new Product().builder().name(productDTO.getName())
+            Product m = Product.builder().name(productDTO.getName())
                     .price(productDTO.getPrice())
                     .image(productDTO.getImage())
                     .stock(productDTO.getStock())

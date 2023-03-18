@@ -282,6 +282,23 @@ class CustomerServiceTest {
         Order order = Order.builder().id(1L).customer(customer).orderDate(LocalDate.now()).build();
 
         OrderDetail orderDetail = OrderDetail.builder().id(1L).order(order).quantity(1).price(800).product(product).build();
+
+        order.addOrderDetails(orderDetail);
+        customer.addOrder(order);
+
+        doReturn(Optional.of(customer)).when(customerRepo).findById(1L);
+        doReturn(Optional.of(product)).when(productRepo).getProductById(1L);
+
+       ProductCardRequest productCardRequest = ProductCardRequest.builder().productId(1).quantity(1).build();
+
+       UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder().orderId(1).productCardRequest(productCardRequest).customerId(1).build();
+
+       this.customerService.updateQuantityProduct(updateOrderRequest);
+
+       verify(customerRepo,times(1)).saveAndFlush(argumentCaptor.capture());
+
+       assertEquals(argumentCaptor.getValue(),customer);
+
     }
     @Test
     public void updateQuantityCustomerNotFoundException(){

@@ -152,24 +152,18 @@ public class CustomerService {
        Order order =customer.getOrder(cancelOrderRequest.getOrderId());
 
 
-       //todo:logica de update al stocului
+
         order.getOrderDetails().forEach(od->{
             Product product= productRepo.getProductById(od.getProduct().getId()).get();
             product.setStock(product.getStock()+od.getQuantity());
             productRepo.saveAndFlush(product);
         });
 
-
         customer.getOrders().remove(order);
-
 
         customerRepo.saveAndFlush(customer);
 
-
     }
-
-
-
 
         @Transactional
         @Modifying
@@ -223,11 +217,11 @@ public class CustomerService {
                 productRepo.saveAndFlush(product);
             });
 
+            customerRepo.saveAndFlush(customer);
+
 
 
         }
-
-
 
         public List<OrderDetail> returnAllOrdersDetailbyOrderId(long customerId){
 
@@ -248,6 +242,7 @@ public class CustomerService {
        }
 
        return orderDetails;
+
         }
 
 
