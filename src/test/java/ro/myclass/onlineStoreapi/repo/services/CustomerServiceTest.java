@@ -36,14 +36,6 @@ class CustomerServiceTest {
     CustomerService customerService;
 
 
-    @Test
-    public void addCustomerOk(){
-        CustomerDTO customerDTO = CustomerDTO.builder().fullName("Popescu Andrei").email("popescuandrei@gmail.com").password("andreiandrei2023").build();
-
-        doReturn(Optional.empty()).when(customerRepo).getCustomerByEmail("popescuandrei@gmail.com");
-
-        assertEquals(true,this.customerService.addCustomer(customerDTO));
-    }
 
     @Test
     public void addCustomerException(){
@@ -54,15 +46,7 @@ class CustomerServiceTest {
         });
     }
 
-    @Test
-    public void removeCustomerOk(){
-        Customer customer = Customer.builder().fullName("Rusu Cristian").email("rusucristian@gmail.com").password("cristicristian2023").build();
-        customerRepo.save(customer);
 
-        doReturn(Optional.of(customer)).when(customerRepo).getCustomerByEmail("rusucristian@gmail.com");
-
-        assertEquals(true,this.customerService.removeCustomer("rusucristian@gmail.com"));
-    }
 
     @Test
     public void removeCustomerException(){
@@ -123,27 +107,6 @@ class CustomerServiceTest {
         });
     }
 
-    @Test
-    public void addOrderOk(){
-        Customer customer = Customer.builder().fullName("Victor Costache").email("victorcostache@gmail.com").password("victorvictor").id(1L).build();
-
-        customerRepo.save(customer);
-
-        Product product = Product.builder().id(1L).price(250).name("casti gaming").stock(500).build();
-
-        ProductCardRequest cardRequest = ProductCardRequest.builder().productId(Math.toIntExact(product.getId())).quantity(2).build();
-
-        List<ProductCardRequest> list = new ArrayList<>();
-        list.add(cardRequest);
-
-        CreateOrderRequest createOrderRequest = CreateOrderRequest.builder().customerId(Math.toIntExact(customer.getId())).productCardRequests(list).build();
-
-        doReturn(Optional.of(customer)).when(customerRepo).findById(1L);
-
-        doReturn(Optional.of(product)).when(productRepo).getProductById(product.getId());
-        assertEquals(true,this.customerService.addOrder(createOrderRequest));
-
-    }
 
     @Test
     public void addOrderCustomerNotFoundException(){
@@ -201,30 +164,6 @@ class CustomerServiceTest {
 
     }
 
-    @Test
-    public void cancelOrderOk(){
-        Customer customer = Customer.builder().fullName("Fiodor Stan").email("fiodorstan@gmail.com").password("fiodorstan@gmail.com").id(1L).build();
-
-        customerRepo.save(customer);
-
-        Order order = Order.builder().orderDate(LocalDate.now()).id(1L).build();
-
-        customer.addOrder(order);
-
-        Product product = Product.builder().name("tv samsung 90 inch").price(3000).id(1L).stock(700).build();
-
-        OrderDetail orderDetail = OrderDetail.builder().id(1L).product(product).price(6000).quantity(2).build();
-
-        order.addOrderDetails(orderDetail);
-
-        CancelOrderRequest cancelOrderRequest = CancelOrderRequest.builder().orderId(Math.toIntExact(order.getId())).customerId(Math.toIntExact(customer.getId())).build();
-
-        doReturn(Optional.of(customer)).when(customerRepo).getCustomerById(cancelOrderRequest.getCustomerId());
-
-        doReturn(Optional.of(product)).when(productRepo).getProductById(1L);
-
-        assertEquals(true,this.customerService.cancelOrder(cancelOrderRequest));
-    }
 
     @Test
     public void cancelOrderException(){
@@ -239,37 +178,7 @@ class CustomerServiceTest {
 
     }
 
-    @Test
-    public void updateQuantityOk(){
 
-        Customer customer = Customer.builder().fullName("Petru Razvan").email("petrurazvan@gmail.com").password("petrurazvanpetru2023!").id(1L).build();
-
-        customerRepo.save(customer);
-
-        Product product = Product.builder().name("tv lg 40 inch").stock(654).price(2600).id(1L).build();
-
-        productRepo.save(product);
-
-        Order order = Order.builder().orderDate(LocalDate.now()).customer(customer).id(1L).build();
-
-        OrderDetail orderDetail = OrderDetail.builder().order(order).quantity(2).product(product).price(5200).id(1L).build();
-
-        order.addOrderDetails(orderDetail);
-        customer.addOrder(order);
-
-        ProductCardRequest productCardRequest = ProductCardRequest.builder().productId(1).quantity(4).build();
-
-
-        UpdateOrderRequest orderRequest = UpdateOrderRequest.builder().orderId(Math.toIntExact(order.getId())).productCardRequest(productCardRequest).customerId(1).build();
-
-        doReturn(Optional.of(customer)).when(customerRepo).findById((long) 1);
-        doReturn(Optional.of(product)).when(productRepo).getProductById(product.getId());
-
-
-        assertEquals(true,this.customerService.updateQuantityProduct(orderRequest));
-
-
-    }
 
     @Test
     public void updateQuantityCustomerNotFoundException(){

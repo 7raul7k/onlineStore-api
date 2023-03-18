@@ -41,29 +41,29 @@ public class CustomerService {
         this.productRepo = productRepo;
     }
     @Transactional
-    public  boolean addCustomer(CustomerDTO customer) {
+    public  void addCustomer(CustomerDTO customer) {
         Optional<Customer> optionalCustomer = this.customerRepo.getCustomerByEmail(customer.getEmail());
 
         if (optionalCustomer.isEmpty()) {
-                Customer m = new Customer().builder()
-                        .email(customer.getEmail())
+                Customer m = Customer.builder().email(customer.getEmail())
                         .password(customer.getPassword())
                         .fullName(customer.getFullName())
                         .build();
-                return true;
+
+                this.customerRepo.save(m);
         }else{
             throw new CustomerWasFoundException();
         }
     }
 
-    public boolean removeCustomer(String email) {
+    public void removeCustomer(String email) {
         Optional<Customer> customer = this.customerRepo.getCustomerByEmail(email);
 
         if (customer.isEmpty()) {
             throw new CustomerNotFoundException();
         } else {
             this.customerRepo.delete(customer.get());
-            return true;
+
         }
     }
 
@@ -89,8 +89,7 @@ public class CustomerService {
 
     @Transactional
     @Modifying
-    public boolean addOrder(CreateOrderRequest createOrderRequest) {
-
+    public void addOrder(CreateOrderRequest createOrderRequest) {
 
         Optional<Customer> customer = this.customerRepo.findById((long) createOrderRequest.getCustomerId());
 
@@ -104,28 +103,25 @@ public class CustomerService {
                 .orderDetails(new ArrayList<>())
                 .build();
 
-
         createOrderRequest.getProductCardRequests().forEach(obj -> {
 
             //ce:exista prodosul cantiatea disponibila update cantitate
             //cream orderDetails->ptr
 
-            Optional<Product> product = this.productRepo.getProductById(obj.getProductId());
+            Optional<Product> product = this.productRepo.findById((long) obj.getProductId());
 
             if (product.isEmpty() == false) {
                 Product product1 = product.get();
+                OrderDetail orderDetail = OrderDetail.builder().product(product1)
+                        .price(product1.getPrice())
+                        .quantity(obj.getQuantity())
+                        .build();
                 if (obj.getQuantity() < product1.getStock()) {
 
                     product1.setStock(product1.getStock() - obj.getQuantity());
 
-                    OrderDetail orderDetail = OrderDetail.builder().product(product1)
-                            .price(product1.getPrice())
-                            .quantity(obj.getQuantity())
-                            .build();
-
-
                     order.addOrderDetails(orderDetail);
-                    this.productRepo.save(product1);
+                    this.productRepo.saveAndFlush(product1);
                 } else {
                     throw new StockNotAvailableException(product.get().getName());
                 }
@@ -134,19 +130,17 @@ public class CustomerService {
                 throw new ProductNotFoundException();
             }
 
-
         });
 
         customer1.addOrder(order);
+        this.orderRepo.save(order);
 
         customerRepo.saveAndFlush(customer1);
-        return true;
-
 
     }
     @Transactional
     @Modifying
-    public boolean cancelOrder(CancelOrderRequest cancelOrderRequest) {
+    public void cancelOrder(CancelOrderRequest cancelOrderRequest) {
 
        Optional<Customer> customerOptional = this.customerRepo.getCustomerById(cancelOrderRequest.getCustomerId());
 
@@ -170,7 +164,7 @@ public class CustomerService {
 
 
         customerRepo.saveAndFlush(customer);
-        return true;
+
 
     }
 
@@ -179,7 +173,7 @@ public class CustomerService {
 
         @Transactional
         @Modifying
-        public boolean updateQuantityProduct (UpdateOrderRequest updateOrderRequest){
+        public void updateQuantityProduct (UpdateOrderRequest updateOrderRequest){
 
             Optional<Customer> customer1 = this.customerRepo.findById((long)updateOrderRequest.getCustomerId());
 
@@ -221,13 +215,15 @@ public class CustomerService {
                     orderDetailRepo.saveAndFlush(k);
                 }
 
+
                 }else if (k.getProduct().getId() == updateOrderRequest.getProductCardRequest().getProductId() && productStock < updateOrderRequest.getProductCardRequest().getQuantity()){
                     throw new StockNotAvailableException(product.getName());
                 }
 
+                productRepo.saveAndFlush(product);
             });
 
-            return true;
+
 
         }
 

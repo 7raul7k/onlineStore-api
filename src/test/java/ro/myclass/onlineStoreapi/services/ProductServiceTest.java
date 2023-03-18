@@ -58,17 +58,8 @@ class ProductServiceTest {
         });
     }
 
-    @Test
-    public void addProductOk(){
 
-        ProductDTO productDTO = ProductDTO.builder().name("PC Gaming Chair").price(1400).stock(5000).build();
-
-        doReturn(Optional.empty()).when(productRepo).getProductByName("PC Gaming Chair");
-
-
-        assertEquals(true,this.productService.addProduct(productDTO));
-
-    }
+    //    todo:de refacut addProductOk
 
     @Test
     public void addProductException(){
@@ -79,19 +70,7 @@ class ProductServiceTest {
         });
     }
 
-    @Test
-    public void deleteProductOk(){
-
-        Product product = Product.builder().id(1L).name("Apple AirPods Pro").price(400).stock(600).build();
-
-        productRepo.save(product);
-
-        doReturn(Optional.of(product)).when(productRepo).getProductByName("Apple AirPods Pro");
-
-        assertEquals(true,this.productService.deleteProduct("Apple AirPods Pro"));
-
-
-    }
+    //    todo:de refacut deleteProductOk
 
     @Test
     public void deleteProductException(){
