@@ -34,18 +34,18 @@ public class ProductService {
     }
 
     @Transactional
-    public boolean addProduct(ProductDTO productDTO){
+    public void addProduct(ProductDTO productDTO){
         Optional<Product> product = this.productRepo.getProductByName(productDTO.getName());
 
         if(product.isEmpty()){
-            Product m = new Product().builder().name(productDTO.getName())
+            Product m = Product.builder().name(productDTO.getName())
                     .price(productDTO.getPrice())
                     .image(productDTO.getImage())
                     .stock(productDTO.getStock())
                     .build();
 
             this.productRepo.save(m);
-            return true;
+
         }else{
             throw new ProductWasFoundException();
         }
@@ -54,14 +54,14 @@ public class ProductService {
 
     @Transactional
     @Modifying
-    public boolean deleteProduct(String name){
+    public void deleteProduct(String name){
         Optional<Product> product = this.productRepo.getProductByName(name);
 
         if(product.isEmpty()){
             throw new ProductNotFoundException();
         }else{
             this.productRepo.delete(product.get());
-            return true;
+
         }
     }
 

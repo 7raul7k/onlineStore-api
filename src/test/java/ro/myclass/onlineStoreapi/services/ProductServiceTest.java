@@ -2,6 +2,8 @@ package ro.myclass.onlineStoreapi.services;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +30,9 @@ class ProductServiceTest {
 
     @InjectMocks
     ProductService productService;
+
+    @Captor
+    ArgumentCaptor<Product> argumentCaptor;
 
     @Test
     public void showProductsOk(){
@@ -58,15 +63,22 @@ class ProductServiceTest {
         });
     }
 
+
     @Test
     public void addProductOk(){
+        ProductDTO productDTO = ProductDTO.builder().name("Microphone trust gxt").stock(198).price(650).image("https://www.images.com/microphone-trust-gxt").build();
 
-        ProductDTO productDTO = ProductDTO.builder().name("PC Gaming Chair").price(1400).stock(5000).build();
+        Product m = Product.builder().name(productDTO.getName())
+                .price(productDTO.getPrice())
+                .image(productDTO.getImage())
+                .stock(productDTO.getStock())
+                .build();
+        this.productService.addProduct(productDTO);
 
-        doReturn(Optional.empty()).when(productRepo).getProductByName("PC Gaming Chair");
+        verify(productRepo,times(1)).save(argumentCaptor.capture());
 
+        assertEquals(argumentCaptor.getValue(),m);
 
-        assertEquals(true,this.productService.addProduct(productDTO));
 
     }
 
@@ -79,17 +91,20 @@ class ProductServiceTest {
         });
     }
 
+
+
     @Test
     public void deleteProductOk(){
-
-        Product product = Product.builder().id(1L).name("Apple AirPods Pro").price(400).stock(600).build();
-
+        Product product = Product.builder().id(1L).price(640).name("Razer Microphone for streaming").stock(400).image("https://www.images.com/razer-microphone-streaming").build();
         productRepo.save(product);
 
-        doReturn(Optional.of(product)).when(productRepo).getProductByName("Apple AirPods Pro");
 
-        assertEquals(true,this.productService.deleteProduct("Apple AirPods Pro"));
+        doReturn(Optional.of(product)).when(productRepo).getProductByName("Razer Microphone for streaming");
 
+        this.productService.deleteProduct(product.getName());
+        verify(productRepo,times(1)).delete(argumentCaptor.capture());
+
+        assertEquals(argumentCaptor.getValue(),product);
 
     }
 
