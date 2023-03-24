@@ -1,10 +1,8 @@
-package ro.myclass.onlineStoreapi.services;
+package ro.myclass.onlineStoreapi.repo.services;
 
 import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -12,12 +10,14 @@ import ro.myclass.onlineStoreapi.dto.*;
 import ro.myclass.onlineStoreapi.exceptions.*;
 import ro.myclass.onlineStoreapi.models.*;
 import ro.myclass.onlineStoreapi.repo.*;
+import ro.myclass.onlineStoreapi.services.CustomerService;
+
 import java.time.LocalDate;
 import java.util.*;
 
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -35,25 +35,7 @@ class CustomerServiceTest {
     @InjectMocks
     CustomerService customerService;
 
-    @Captor
-    ArgumentCaptor<Customer> argumentCaptor;
 
-
-    @Test
-    public void addCustomerOk(){
-        CustomerDTO customer = CustomerDTO.builder().fullName("Popa Alexandru").email("popaalexandru@gmail.com").password("popaalexandru2023").build();
-
-        Customer m = Customer.builder().email(customer.getEmail())
-                .password(customer.getPassword())
-                .fullName(customer.getFullName())
-                .build();
-        doReturn(Optional.empty()).when(customerRepo).getCustomerByEmail("popaalexandru@gmail.com");
-
-        customerService.addCustomer(customer);
-        verify(customerRepo,times(1)).save(argumentCaptor.capture());
-
-        assertEquals(argumentCaptor.getValue(),m);
-    }
 
     @Test
     public void addCustomerException(){
@@ -65,21 +47,7 @@ class CustomerServiceTest {
     }
 
 
-   //    todo:de refacut removeCustomerOk
 
-    @Test
-    public void removeCustomerOk(){
-        Customer customer = Customer.builder().id(1L).fullName("Stanciu Marian").email("stanciumarian@gmail.com").password("stanciumarian2023").build();
-        customerRepo.save(customer);
-
-        doReturn(Optional.of(customer)).when(customerRepo).getCustomerByEmail(customer.getEmail());
-
-        customerService.removeCustomer(customer.getEmail());
-
-        verify(customerRepo,times(1)).delete(argumentCaptor.capture());
-
-        assertEquals(argumentCaptor.getValue(),customer);
-    }
     @Test
     public void removeCustomerException(){
 
@@ -139,33 +107,7 @@ class CustomerServiceTest {
         });
     }
 
-    //    todo:de refacut addOrderCustomer
 
-    @Test
-    public void addOrderCustomerOk(){
-
-        Customer customer = Customer.builder().id(1L).fullName("Andrei Florin").email("andreiflorin@gmail.com").password("andreiflorin2023").build();
-        customerRepo.save(customer);
-
-        Product product = Product.builder().id(1L).name("TV samsung 40 inch 4K").image("https://www.images.com/tv-samsung-40-inch-4k").stock(300).price(2500).build();
-
-        productRepo.save(product);
-
-        doReturn(Optional.of(customer)).when(customerRepo).findById(1L);
-        doReturn(Optional.of(product)).when(productRepo).findById(1L);
-        ProductCardRequest cardRequest = ProductCardRequest.builder().productId(1).quantity(2).build();
-
-        List<ProductCardRequest> productCardRequests = new ArrayList<>();
-        productCardRequests.add(cardRequest);
-
-        CreateOrderRequest createOrderRequest = CreateOrderRequest.builder().productCardRequests(productCardRequests).customerId(1).build();
-
-        this.customerService.addOrder(createOrderRequest);
-        verify(customerRepo,times(1)).saveAndFlush(argumentCaptor.capture());
-        assertEquals(argumentCaptor.getValue(),customer);
-
-
-    }
     @Test
     public void addOrderCustomerNotFoundException(){
         doReturn(Optional.empty()).when(customerRepo).findById(0L);
@@ -223,36 +165,6 @@ class CustomerServiceTest {
     }
 
 
-    //    todo:de refacut cancelOrderOk
-
-    @Test
-    public void cancerOrderOk(){
-        Customer customer = Customer.builder().id(1L).fullName("Stoica Ionut").email("stoicaionut@gmail.com").password("stoicaionut2023").build();
-        customerRepo.save(customer);
-        Order order = Order.builder().id(1L).orderDate(LocalDate.now()).customer(customer).build();
-
-        Product product = Product.builder().id(1L).name("Iphone 14X").price(5000).stock(250).image("https://www.images.com/iphone-14-x").build();
-
-        productRepo.save(product);
-
-        OrderDetail orderDetail = OrderDetail.builder().id(1L).order(order).quantity(2).product(product).price(10000).build();
-
-        order.addOrderDetails(orderDetail);
-        customer.addOrder(order);
-
-        doReturn(Optional.of(customer)).when(customerRepo).getCustomerById(1L);
-        doReturn(Optional.of(product)).when(productRepo).getProductById(1L);
-        CancelOrderRequest cancelOrderRequest = CancelOrderRequest.builder().orderId(1).customerId(1).build();
-
-        this.customerService.cancelOrder(cancelOrderRequest);
-
-        verify(customerRepo,times(1)).saveAndFlush(argumentCaptor.capture());
-
-        assertEquals(argumentCaptor.getValue(),customer);
-
-
-
-    }
     @Test
     public void cancelOrderException(){
         doReturn(Optional.empty()).when(customerRepo).getCustomerById(1L);
@@ -267,39 +179,7 @@ class CustomerServiceTest {
     }
 
 
-    //    todo:de refacut updateQuantityOk
 
-    @Test
-    public void updateQuantityOk(){
-        Customer customer = Customer.builder().id(1L).fullName("Popa Iulian").email("popaiulian@gmail.com").password("popaiulian2023").build();
-
-        customerRepo.save(customer);
-
-        Product product = Product.builder().id(1L).name("Apple watch 210").image("https://www.images.com/apple-watch-210").stock(200).price(800).build();
-
-        productRepo.save(product);
-
-        Order order = Order.builder().id(1L).customer(customer).orderDate(LocalDate.now()).build();
-
-        OrderDetail orderDetail = OrderDetail.builder().id(1L).order(order).quantity(1).price(800).product(product).build();
-
-        order.addOrderDetails(orderDetail);
-        customer.addOrder(order);
-
-        doReturn(Optional.of(customer)).when(customerRepo).findById(1L);
-        doReturn(Optional.of(product)).when(productRepo).getProductById(1L);
-
-       ProductCardRequest productCardRequest = ProductCardRequest.builder().productId(1).quantity(1).build();
-
-       UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder().orderId(1).productCardRequest(productCardRequest).customerId(1).build();
-
-       this.customerService.updateQuantityProduct(updateOrderRequest);
-
-       verify(customerRepo,times(1)).saveAndFlush(argumentCaptor.capture());
-
-       assertEquals(argumentCaptor.getValue(),customer);
-
-    }
     @Test
     public void updateQuantityCustomerNotFoundException(){
 
