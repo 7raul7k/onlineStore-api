@@ -1,4 +1,4 @@
-package ro.myclass.onlineStoreapi.repo.services;
+package ro.myclass.onlineStoreapi.services;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
