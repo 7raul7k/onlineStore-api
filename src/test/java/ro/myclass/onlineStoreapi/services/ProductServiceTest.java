@@ -2,6 +2,8 @@ package ro.myclass.onlineStoreapi.services;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -11,14 +13,13 @@ import ro.myclass.onlineStoreapi.exceptions.ProductNotFoundException;
 import ro.myclass.onlineStoreapi.exceptions.ProductWasFoundException;
 import ro.myclass.onlineStoreapi.models.Product;
 import ro.myclass.onlineStoreapi.repo.ProductRepo;
-import ro.myclass.onlineStoreapi.services.ProductService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -29,6 +30,9 @@ class ProductServiceTest {
 
     @InjectMocks
     ProductService productService;
+
+    @Captor
+    ArgumentCaptor<Product> argumentCaptor;
 
     @Test
     public void showProductsOk(){
@@ -60,6 +64,23 @@ class ProductServiceTest {
     }
 
 
+    @Test
+    public void addProductOk(){
+        ProductDTO productDTO = ProductDTO.builder().name("Microphone trust gxt").stock(198).price(650).image("https://www.images.com/microphone-trust-gxt").build();
+
+        Product m = Product.builder().name(productDTO.getName())
+                .price(productDTO.getPrice())
+                .image(productDTO.getImage())
+                .stock(productDTO.getStock())
+                .build();
+        this.productService.addProduct(productDTO);
+
+        verify(productRepo,times(1)).save(argumentCaptor.capture());
+
+        assertEquals(argumentCaptor.getValue(),m);
+
+
+    }
 
     @Test
     public void addProductException(){
@@ -71,6 +92,21 @@ class ProductServiceTest {
     }
 
 
+
+    @Test
+    public void deleteProductOk(){
+        Product product = Product.builder().id(1L).price(640).name("Razer Microphone for streaming").stock(400).image("https://www.images.com/razer-microphone-streaming").build();
+        productRepo.save(product);
+
+
+        doReturn(Optional.of(product)).when(productRepo).getProductByName("Razer Microphone for streaming");
+
+        this.productService.deleteProduct(product.getName());
+        verify(productRepo,times(1)).delete(argumentCaptor.capture());
+
+        assertEquals(argumentCaptor.getValue(),product);
+
+    }
 
     @Test
     public void deleteProductException(){
