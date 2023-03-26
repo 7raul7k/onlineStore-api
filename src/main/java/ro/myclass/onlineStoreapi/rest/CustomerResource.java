@@ -87,6 +87,15 @@ public ResponseEntity<CreateOrderResponse> addOrder(@RequestBody CreateOrderRequ
 
     }
 
+    @DeleteMapping(path = "/cancelOrder")
+    public ResponseEntity<CreateOrderResponse> deleteOrder(@RequestBody CancelOrderRequest orderRequest){
+        this.customerService.cancelOrder(orderRequest);
+
+        return new ResponseEntity<>(new CreateOrderResponse("sters cu succes!"),HttpStatus.OK);
+
+
+    }
+
 }
 
 

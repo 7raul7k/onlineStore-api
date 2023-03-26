@@ -82,7 +82,7 @@ public class CustomerService {
         if (customers.isEmpty()) {
             throw new ListEmptyException();
         } else {
-            return this.customerRepo.getAllCustomers();
+            return customers;
         }
 
     }

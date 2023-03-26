@@ -38,14 +38,14 @@ public class ProductResource {
 
     }
 
-    @DeleteMapping("/deleteProduct/{name}")
-    public ResponseEntity<String> deleteProduct(@PathVariable String name){
+    @DeleteMapping("/deleteProduct/")
+    public ResponseEntity<String> deleteProduct(@RequestParam String name){
         this.productService.deleteProduct(name);
 
         return new ResponseEntity<>("Product was deleted!",HttpStatus.OK);
     }
 
-    @GetMapping("/getProductByName")
+    @GetMapping("/getProductByName/")
     public ResponseEntity<Product> getProductByName(@RequestParam String name){
 
         Product product = this.productService.getProductbyName(name);
@@ -54,14 +54,6 @@ public class ProductResource {
 
     }
 
-    @DeleteMapping(path = "/cancelOrder")
-    public ResponseEntity<CreateOrderResponse> deleteOrder(@RequestBody CancelOrderRequest orderRequest){
-        this.customerService.cancelOrder(orderRequest);
-
-        return new ResponseEntity<>(new CreateOrderResponse("sters cu succes!"),HttpStatus.OK);
-
-
-    }
 
 
 }
