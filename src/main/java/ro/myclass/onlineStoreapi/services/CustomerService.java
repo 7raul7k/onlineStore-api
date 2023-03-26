@@ -45,14 +45,20 @@ public class CustomerService {
         Optional<Customer> optionalCustomer = this.customerRepo.getCustomerByEmail(customer.getEmail());
 
         if (optionalCustomer.isEmpty()) {
-                Customer m = Customer.builder().email(customer.getEmail())
-                        .password(customer.getPassword())
-                        .fullName(customer.getFullName())
-                        .build();
-
-                this.customerRepo.save(m);
+                Customer m = new Customer(customer.getEmail(), customer.getPassword(), customer.getFullName());
+                customerRepo.save(m);
         }else{
             throw new CustomerWasFoundException();
+        }
+    }
+
+    public Customer getCustomerByEmail(String email){
+        Optional<Customer> customer = this.customerRepo.getCustomerByEmail(email);
+
+        if(customer.isEmpty()){
+            throw new CustomerNotFoundException();
+        }else{
+            return customer.get();
         }
     }
 
@@ -82,7 +88,7 @@ public class CustomerService {
         if (customers.isEmpty()) {
             throw new ListEmptyException();
         } else {
-            return this.customerRepo.getAllCustomers();
+            return customers;
         }
 
     }

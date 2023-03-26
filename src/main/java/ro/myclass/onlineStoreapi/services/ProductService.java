@@ -71,7 +71,7 @@ public class ProductService {
         if(product.isEmpty()){
             throw new ProductNotFoundException();
         }
-        return this.productRepo.getProductByName(name).get();
+        return product.get();
 
     }
 

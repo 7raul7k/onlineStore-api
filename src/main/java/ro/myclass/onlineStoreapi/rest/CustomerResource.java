@@ -26,11 +26,10 @@ import java.util.List;
 public class CustomerResource {
     private CustomerService customerService;
 
-    private ProductService productService;
+
 
     public CustomerResource(CustomerService customerService,ProductService productService) {
         this.customerService = customerService;
-        this.productService = productService;
     }
 
  @PostMapping("/addCustomer")
@@ -65,25 +64,28 @@ public class CustomerResource {
 
 
 
-   @GetMapping("/updateQuantityProduct/{customerId}")
+   @PutMapping("/updateQuantityProduct")
    public ResponseEntity<CreateOrderResponse> updateQuantity(@RequestBody  UpdateOrderRequest updateOrderRequest){
      this.customerService.updateQuantityProduct(updateOrderRequest);
 
      return new ResponseEntity<>(new CreateOrderResponse("cantitatea  a fost actualizata!"),HttpStatus.OK);
     }
 
-    @GetMapping("/getOrderDetails/{customerId}")
-        public ResponseEntity<List<OrderDetail>> getOrderDetails ( @PathVariable int customerId){
-            List<OrderDetail> orderDetails = this.customerService.returnAllOrdersDetailbyOrderId(customerId);
-
-            return new ResponseEntity<>(orderDetails,HttpStatus.OK);
-        }
-
-@PostMapping("/{customerId}")
+@PostMapping("/addOrder")
 public ResponseEntity<CreateOrderResponse> addOrder(@RequestBody CreateOrderRequest createOrderRequest){
 
         this.customerService.addOrder(createOrderRequest);
     return new ResponseEntity<>(new CreateOrderResponse("adaugat cu succes!"),HttpStatus.OK);
+
+    }
+
+    @DeleteMapping(path = "/cancelOrder")
+    public ResponseEntity<CreateOrderResponse> deleteOrder(@RequestBody CancelOrderRequest orderRequest){
+        this.customerService.cancelOrder(orderRequest);
+
+
+        return new ResponseEntity<>(new CreateOrderResponse("sters cu succes!"),HttpStatus.OK);
+
 
     }
 

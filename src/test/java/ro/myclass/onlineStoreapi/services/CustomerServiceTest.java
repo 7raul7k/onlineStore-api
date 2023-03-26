@@ -70,7 +70,7 @@ class CustomerServiceTest {
     @Test
     public void removeCustomerOk(){
         Customer customer = Customer.builder().id(1L).fullName("Stanciu Marian").email("stanciumarian@gmail.com").password("stanciumarian2023").build();
-        customerRepo.save(customer);
+
 
         doReturn(Optional.of(customer)).when(customerRepo).getCustomerByEmail(customer.getEmail());
 
@@ -94,7 +94,7 @@ class CustomerServiceTest {
     public void returnCustomerByEmailOk(){
         Customer customer = Customer.builder().fullName("Popa Alexandru").email("popaalexandru@gmail.com").password("popapopa").id(1L).build();
 
-        customerRepo.save(customer);
+
         doReturn(Optional.of(customer)).when(customerRepo).getCustomerByEmail("popaalexandru@gmail.com");
 
         assertEquals(customer,this.customerService.returnCustomerByEmail("popaalexandru@gmail.com"));
@@ -117,9 +117,7 @@ class CustomerServiceTest {
         Customer customer1 = Customer.builder().fullName("Lucia Lungu").email("lucia.lungu@gmail.com").password("lucialungu!2023").build();
         Customer customer2 = Customer.builder().fullName("Luiza Martin").email("martinluiza@gmail.com").password("tN*gE5MA^8~8Z)q").build();
 
-        customerRepo.save(customer);
-        customerRepo.save(customer1);
-        customerRepo.save(customer2);
+
         List<Customer> list = new ArrayList<>();
         list.add(customer);
         list.add(customer1);
@@ -139,17 +137,16 @@ class CustomerServiceTest {
         });
     }
 
-    //    todo:de refacut addOrderCustomer
 
     @Test
     public void addOrderCustomerOk(){
 
         Customer customer = Customer.builder().id(1L).fullName("Andrei Florin").email("andreiflorin@gmail.com").password("andreiflorin2023").build();
-        customerRepo.save(customer);
+
 
         Product product = Product.builder().id(1L).name("TV samsung 40 inch 4K").image("https://www.images.com/tv-samsung-40-inch-4k").stock(300).price(2500).build();
 
-        productRepo.save(product);
+
 
         doReturn(Optional.of(customer)).when(customerRepo).findById(1L);
         doReturn(Optional.of(product)).when(productRepo).findById(1L);
@@ -178,7 +175,7 @@ class CustomerServiceTest {
     @Test
     public void addOrderProductNotFoundException(){
         Customer customer = Customer.builder().id(1L).fullName("Popescu Alex").build();
-        customerRepo.save(customer);
+
 
         doReturn(Optional.of(customer)).when(customerRepo).findById(1L);
 
@@ -186,10 +183,10 @@ class CustomerServiceTest {
 
         Product product = Product.builder().stock(500).id(1L).build();
 
-        productRepo.save(product);
+
         list.add(ProductCardRequest.builder().productId(Math.toIntExact(product.getId())).quantity(0).build());
 
-        doReturn(Optional.empty()).when(productRepo).getProductById(1L);
+//        doReturn(Optional.empty()).when(productRepo).getProductById(1L);
 
         assertThrows(ProductNotFoundException.class,()->{
 
@@ -201,18 +198,16 @@ class CustomerServiceTest {
     @Test
     public void addOrderStockNotAvailableException(){
         Customer customer = Customer.builder().id(1L).fullName("Popescu Alex").build();
-        customerRepo.save(customer);
 
         doReturn(Optional.of(customer)).when(customerRepo).findById(1L);
 
         List<ProductCardRequest> list = new ArrayList<>();
 
-        Product product = Product.builder().stock(0).id(1L).build();
+        Product product = Product.builder().stock(1).id(2L).price(250).image("test").name("casti").build();
 
-        productRepo.save(product);
-        list.add(ProductCardRequest.builder().productId(Math.toIntExact(product.getId())).quantity(0).build());
+        list.add(ProductCardRequest.builder().productId(2).quantity(9).build());
 
-        doReturn(Optional.of(product)).when(productRepo).getProductById(1L);
+        doReturn(Optional.of(product)).when(productRepo).findById(2L);
 
         assertThrows(StockNotAvailableException.class,()->{
 
@@ -223,17 +218,16 @@ class CustomerServiceTest {
     }
 
 
-    //    todo:de refacut cancelOrderOk
 
     @Test
     public void cancerOrderOk(){
         Customer customer = Customer.builder().id(1L).fullName("Stoica Ionut").email("stoicaionut@gmail.com").password("stoicaionut2023").build();
-        customerRepo.save(customer);
+
         Order order = Order.builder().id(1L).orderDate(LocalDate.now()).customer(customer).build();
 
         Product product = Product.builder().id(1L).name("Iphone 14X").price(5000).stock(250).image("https://www.images.com/iphone-14-x").build();
 
-        productRepo.save(product);
+
 
         OrderDetail orderDetail = OrderDetail.builder().id(1L).order(order).quantity(2).product(product).price(10000).build();
 
@@ -267,17 +261,15 @@ class CustomerServiceTest {
     }
 
 
-    //    todo:de refacut updateQuantityOk
 
     @Test
     public void updateQuantityOk(){
         Customer customer = Customer.builder().id(1L).fullName("Popa Iulian").email("popaiulian@gmail.com").password("popaiulian2023").build();
 
-        customerRepo.save(customer);
 
         Product product = Product.builder().id(1L).name("Apple watch 210").image("https://www.images.com/apple-watch-210").stock(200).price(800).build();
 
-        productRepo.save(product);
+
 
         Order order = Order.builder().id(1L).customer(customer).orderDate(LocalDate.now()).build();
 
@@ -315,7 +307,7 @@ class CustomerServiceTest {
         Customer customer = Customer.builder().id(1L).fullName("Adrian").build();
 
         UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder().customerId(1).orderId(1).productCardRequest(ProductCardRequest.builder().productId(1).quantity(1).build()).build();
-        customerRepo.save(customer);
+
 
         doReturn(Optional.of(customer)).when(customerRepo).findById((long) 1);
         doReturn(Optional.empty()).when(productRepo).getProductById(updateOrderRequest.getProductCardRequest().getProductId());
@@ -332,7 +324,6 @@ class CustomerServiceTest {
 
         Product product = Product.builder().id(1L).name("masina de spalat").stock(2).price(1000).build();
 
-        productRepo.save(product);
 
         Order order = Order.builder().orderDate(LocalDate.now()).id(1L).build();
 
@@ -342,7 +333,7 @@ class CustomerServiceTest {
 
         order.addOrderDetails(orderDetail);
 
-        customerRepo.save(customer);
+
 
         UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder().orderId(1).productCardRequest(ProductCardRequest.builder().productId(1).quantity(300).build()).build();
 
@@ -361,12 +352,12 @@ class CustomerServiceTest {
 
         Customer customer = Customer.builder().id(1L).fullName("Moldovan Radu").email("moldovanradu@gmail.com").password("moldomoldovan2023").build();
 
-        customerRepo.save(customer);
+
 
         Order order = Order.builder().orderDate(LocalDate.of(2023,3,4)).id(1L).build();
 
 
-        customer.addOrder(order);
+
 
         Product product = Product.builder().stock(500).price(3000).id(1L).name("tv lg").build();
         Product product1 = Product.builder().stock(700).price(300).id(2L).name("mousepad").build();
@@ -388,17 +379,24 @@ class CustomerServiceTest {
         assertEquals(orderDetails,this.customerService.returnAllOrdersDetailbyOrderId(customer.getId()));
     }
 
+
     @Test
-    public void returnAllOrderDetailByOrderIdException(){
+    public void getCustomerByEmail(){
+        Customer customer = Customer.builder().id(1L).email("andreivlad@gmail.com").fullName("Andrei Vlad").password("andreiandrei").build();
 
-        doReturn(new ArrayList<>()).when(orderRepo).getOrderByCustomerId(1L);
 
-        assertThrows(ListEmptyException.class,()->{
-            this.customerService.returnAllOrdersDetailbyOrderId(1L);
-        });
+        doReturn(Optional.of(customer)).when(customerRepo).getCustomerByEmail("andreivlad@gmail.com");
+
+        assertEquals(customer,this.customerService.getCustomerByEmail("andreivlad@gmail.com"));
     }
 
+    @Test
+    public void getCustomerByEmailError(){
+        doReturn(Optional.empty()).when(customerRepo).getCustomerByEmail("test");
 
-
+       assertThrows(CustomerNotFoundException.class, ()->{
+           this.customerService.getCustomerByEmail("test");
+       });
+    }
 
 }
