@@ -63,7 +63,10 @@ class ProductResourceTest {
 
         doReturn(productList).when(productService).showProducts();
 
-        restMockMvc.perform(get("/api/v1/product/getAllProducts").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(productList))).andExpect(status().isOk());
+        restMockMvc.perform(get("/api/v1/product/getAllProducts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productList)))
+                .andExpect(status().isOk());
 
 
     }
@@ -72,7 +75,9 @@ class ProductResourceTest {
     public void getAllProductsBadRequest() throws Exception{
         doThrow(ListEmptyException.class).when(productService).showProducts();
 
-        restMockMvc.perform(get("/api/v1/product/getAllProducts").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
+        restMockMvc.perform(get("/api/v1/product/getAllProducts")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -82,14 +87,21 @@ class ProductResourceTest {
 
         doNothing().when(productService).addProduct(productDTO);
 
-        restMockMvc.perform(post("/api/v1/product/addProduct").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(productDTO))).andExpect(status().isOk());
+        restMockMvc.perform(post("/api/v1/product/addProduct")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productDTO)))
+                .andExpect(status().isOk());
     }
+
 
     @Test
     public void addProductBadRequest() throws Exception{
         doThrow(ProductWasFoundException.class).when(productService).addProduct(new ProductDTO());
 
-        restMockMvc.perform(post("/api/v1/product/addProduct").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new ProductDTO()))).andExpect(status().isBadRequest());
+        restMockMvc.perform(post("/api/v1/product/addProduct")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new ProductDTO())))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -99,8 +111,9 @@ class ProductResourceTest {
 
         doNothing().when(productService).deleteProduct("product");
 
-        restMockMvc.perform(delete("/api/v1/product/deleteProduct/?name=product").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        restMockMvc.perform(delete("/api/v1/product/deleteProduct/?name=product")
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk());
 
 
 
@@ -110,8 +123,10 @@ class ProductResourceTest {
     public void removeProductBadRequest() throws Exception{
         doThrow(ProductNotFoundException.class).when(productService).deleteProduct("test");
 
-        restMockMvc.perform(delete("/api/v1/product/deleteProduct/?name=test").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+        restMockMvc.perform(delete("/api/v1/product/deleteProduct/?name=test")
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status()
+                        .isBadRequest());
     }
 
     @Test
@@ -121,8 +136,9 @@ class ProductResourceTest {
 
         doReturn(product).when(productService).getProductbyName("telefon");
 
-        restMockMvc.perform(get("/api/v1/product/getProductByName/?name=telefon").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(product)))
-                .andExpect(status().isOk());
+        restMockMvc.perform(get("/api/v1/product/getProductByName/?name=telefon")
+                        .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(product)))
+                        .andExpect(status().isOk());
 
 
 
@@ -133,16 +149,11 @@ class ProductResourceTest {
     public void getProductByNameBadRequest() throws Exception {
         doThrow(ProductNotFoundException.class).when(productService).getProductbyName("test");
 
-        restMockMvc.perform(get("/api/v1/product/getProductByName/?name=test").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
+        restMockMvc.perform(get("/api/v1/product/getProductByName/?name=test")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
-    @Test
-    public void cancelOrder(){
-        Faker faker = new Faker();
-        CancelOrderRequest cancelOrderRequest = new CancelOrderRequest(faker.number().randomDigit(),faker.number().randomDigit());
 
-
-
-    }
 
 }
