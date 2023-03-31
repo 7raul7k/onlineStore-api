@@ -3,12 +3,15 @@ package ro.myclass.onlineStoreapi.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ro.myclass.onlineStoreapi.PDFGenerator.CustomerPDFGenerator;
 import ro.myclass.onlineStoreapi.dto.*;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.models.OrderDetail;
@@ -16,8 +19,14 @@ import ro.myclass.onlineStoreapi.models.Product;
 import ro.myclass.onlineStoreapi.services.CustomerService;
 import ro.myclass.onlineStoreapi.services.ProductService;
 
+import javax.servlet.http.HttpServletResponse;
+
 import javax.validation.Valid;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -86,7 +95,24 @@ public ResponseEntity<CreateOrderResponse> addOrder(@RequestBody CreateOrderRequ
 
         return new ResponseEntity<>(new CreateOrderResponse("sters cu succes!"),HttpStatus.OK);
 
+    }
 
+    @GetMapping("/exportPDF")
+    public ResponseEntity<CreateOrderResponse> generator(HttpServletResponse response) throws DocumentException, IOException {
+        response.setContentType("application/pdf");
+        DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD:HH:MM:SS");
+        String currentDate = dateFormat.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=customerpdf_" + currentDate + ".pdf";
+
+        response.setHeader(headerKey,headerValue);
+
+        List<Customer> customers = customerService.getAllCustomer();
+        CustomerPDFGenerator generator = new CustomerPDFGenerator(customers);
+
+       generator.generate(response);
+
+        return new ResponseEntity<>( new CreateOrderResponse("Descarcat cu succes"), HttpStatus.OK);
     }
 
 }
