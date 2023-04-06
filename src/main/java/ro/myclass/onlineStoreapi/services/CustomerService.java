@@ -251,6 +251,27 @@ public class CustomerService {
 
         }
 
+        public List<OrderDetail> returnAllOrderDetailsByCustomerID(int customerId){
+        Optional<Customer> customerOptional = this.customerRepo.getCustomerById((long) customerId);
+
+        if(customerOptional.isEmpty()){
+            throw new CustomerNotFoundException();
+        }
+
+        Customer customer = customerOptional.get();
+        List<Order> orders = customer.getOrders();
+
+        List<OrderDetail> orderDetailList = new ArrayList<>();
+        orders.stream().forEach((order -> {
+
+            orderDetailList.addAll(order.getOrderDetails());
+
+        }));
+
+
+        return orderDetailList;
+
+        }
 
 
 

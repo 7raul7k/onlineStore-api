@@ -11,9 +11,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ro.myclass.onlineStoreapi.PDFGenerator.CustomerBillPDFGenerator;
+import ro.myclass.onlineStoreapi.PDFGenerator.CustomerOrderPDFGenerator;
 import ro.myclass.onlineStoreapi.PDFGenerator.CustomerPDFGenerator;
 import ro.myclass.onlineStoreapi.dto.*;
 import ro.myclass.onlineStoreapi.models.Customer;
+import ro.myclass.onlineStoreapi.models.Order;
 import ro.myclass.onlineStoreapi.models.OrderDetail;
 import ro.myclass.onlineStoreapi.models.Product;
 import ro.myclass.onlineStoreapi.services.CustomerService;
@@ -113,6 +116,47 @@ public ResponseEntity<CreateOrderResponse> addOrder(@RequestBody CreateOrderRequ
        generator.generate(response);
 
         return new ResponseEntity<>( new CreateOrderResponse("Descarcat cu succes"), HttpStatus.OK);
+    }
+
+    @GetMapping("/exportOrderPDF/{customerId}")
+    public ResponseEntity<CreateOrderResponse> generatorPdfOrder(HttpServletResponse response,@PathVariable int customerId)throws DocumentException,IOException{
+        response.setContentType("application/pdf");
+        DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD:HH:MM:SS");
+        String currentDate = dateFormat.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment;filename=customerorderpdf_" + currentDate + ".pdf";
+
+        response.setHeader(headerKey,headerValue);
+
+        List<OrderDetail> orderDetails = this.customerService.returnAllOrderDetailsByCustomerID(customerId);
+
+        CustomerOrderPDFGenerator customerOrderPDFGenerator = new CustomerOrderPDFGenerator(orderDetails);
+
+        customerOrderPDFGenerator.generate(response);
+
+        return new ResponseEntity<>(new CreateOrderResponse("Descarcat cu succes"),HttpStatus.OK);
+
+    }
+
+    @GetMapping("/exportBillPDF")
+    public ResponseEntity<CreateOrderResponse> generateBillPDF(@RequestParam String email, HttpServletResponse response) throws IOException {
+        response.setContentType("application/pdf");
+        DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD:HH:MM:SS");
+        String currentDate = dateFormat.format(new Date());
+
+        String headerKey= "Content-Disposition";
+        String headerValue = "attachment;filename = billorderpdf_" + currentDate + ".pdf";
+
+        response.setHeader(headerKey,headerValue);
+
+        Customer customer = this.customerService.returnCustomerByEmail(email);
+
+        List<OrderDetail> orderDetails = this.customerService.returnAllOrderDetailsByCustomerID(Math.toIntExact(customer.getId()));
+        CustomerBillPDFGenerator pdfGenerator = new CustomerBillPDFGenerator(customer,orderDetails);
+
+        pdfGenerator.generate(response);
+
+        return new ResponseEntity<>(new CreateOrderResponse("Descarcat cu succes"),HttpStatus.OK);
     }
 
 }
