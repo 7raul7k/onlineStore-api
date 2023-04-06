@@ -273,6 +273,31 @@ public class CustomerService {
 
         }
 
+        public List<OrderDetail> sortOrderByLocalDate(int customerID){
+
+        Optional<Customer> customer = this.customerRepo.getCustomerById(customerID);
+
+        if(customer.isEmpty()){
+
+            throw new CustomerNotFoundException();
+        }
+
+        List<Order> orders = this.orderRepo.sortOrderListByDate((long) customerID);
+
+        if(orders.isEmpty()){
+            throw new ListEmptyException();
+        }
+
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        orders.stream().forEach((k)->{
+
+            orderDetails.addAll(k.getOrderDetails());
+
+        });
+
+        return orderDetails;
+        }
+
 
 
 }
