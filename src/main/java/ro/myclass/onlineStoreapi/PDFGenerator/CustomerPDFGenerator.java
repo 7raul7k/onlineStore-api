@@ -25,11 +25,8 @@ public class CustomerPDFGenerator {
     public void writeTableHeader(PdfPTable table){
         PdfPCell cell = new PdfPCell();
         cell.setBackgroundColor(Color.CYAN);
-
         cell.setPadding(5);
-
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-
         font.setColor(Color.white);
         cell.setPhrase(new Phrase("ID",font));
         table.addCell(cell);

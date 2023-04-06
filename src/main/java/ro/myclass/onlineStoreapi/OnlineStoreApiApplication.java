@@ -68,4 +68,9 @@ public class OnlineStoreApiApplication {
 
 		};
 	}
+
+	//todo:filtrare  dupa un interval de timp
+	//todo:de adaugat poze imagini in baza de date multipart /byte[]
+	//testare
+
 }
