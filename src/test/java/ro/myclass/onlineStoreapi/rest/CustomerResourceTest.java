@@ -16,11 +16,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ro.myclass.onlineStoreapi.dto.*;
 import ro.myclass.onlineStoreapi.exceptions.*;
 import ro.myclass.onlineStoreapi.models.Customer;
+import ro.myclass.onlineStoreapi.models.Order;
+import ro.myclass.onlineStoreapi.models.OrderDetail;
+import ro.myclass.onlineStoreapi.models.Product;
 import ro.myclass.onlineStoreapi.services.CustomerService;
 
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -218,6 +222,40 @@ class CustomerResourceTest {
         doThrow(CustomerNotFoundException.class).when(customerService).cancelOrder(new CancelOrderRequest());
 
         restMockMvc.perform(delete("/api/v1/customer/cancelOrder").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new CancelOrderRequest()))).andExpect(status().isBadRequest());
+   }
+
+   @Test
+    public void getSortedListOk() throws Exception{
+        Customer customer = Customer.builder().fullName("Andrei Popescu").password("esihdgsad2").id(1L).build();
+
+        Order order = Order.builder().id(1L).customer(customer).build();
+
+       OrderDetail orderDetail = OrderDetail.builder()
+               .order(order)
+               .product(Product.builder().image(new byte[21])
+                       .price(250)
+                       .name("Gaming chair")
+                       .stock(20)
+                       .build()).build();
+       order.addOrderDetails(orderDetail);
+
+       customer.addOrder(order);
+
+       List<OrderDetail> orderDetails = new ArrayList<>();
+       orderDetails.add(orderDetail);
+       doReturn(orderDetails).when(customerService).sortOrderByLocalDate(1);
+
+       restMockMvc.perform(get("/api/v1/customer/getSortedOrderListByDate/1").contentType(MediaType.APPLICATION_JSON))
+               .andExpect(status().isOk());
+   }
+
+
+   @Test
+    public void getSortedListBadRequest() throws Exception {
+        doThrow(CustomerNotFoundException.class).when(customerService).sortOrderByLocalDate(1);
+
+       restMockMvc.perform(get("/api/v1/customer/getSortedOrderListByDate/1").contentType(MediaType.APPLICATION_JSON))
+               .andExpect(status().isBadRequest());
    }
 }
 
