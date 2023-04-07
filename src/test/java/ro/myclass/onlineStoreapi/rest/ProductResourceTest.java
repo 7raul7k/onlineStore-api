@@ -3,6 +3,7 @@ package ro.myclass.onlineStoreapi.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
+import org.apache.catalina.connector.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,7 @@ import ro.myclass.onlineStoreapi.services.CustomerService;
 import ro.myclass.onlineStoreapi.services.ProductService;
 
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +60,7 @@ class ProductResourceTest {
         List<Product> productList = new ArrayList<>();
 
         for(int i = 0 ; i < 10;i++){
-          productList.add(Product.builder().id((long) i).name(faker.lorem().sentence()).price(faker.number().numberBetween(100,650)).image(faker.lorem().sentence()).build());
+          productList.add(Product.builder().id((long) i).name(faker.lorem().sentence()).price(faker.number().numberBetween(100,650)).build());
         }
 
         doReturn(productList).when(productService).showProducts();
@@ -83,7 +85,7 @@ class ProductResourceTest {
     @Test
     public void addProduct() throws Exception {
         Faker faker = new Faker();
-        ProductDTO productDTO = ProductDTO.builder().name("casti gaming hyperX").stock(250).price(500).image(faker.lorem().sentence()).build();
+        ProductDTO productDTO = ProductDTO.builder().name("casti gaming hyperX").stock(250).price(500).build();
 
         doNothing().when(productService).addProduct(productDTO);
 
@@ -107,7 +109,7 @@ class ProductResourceTest {
     @Test
     public void removeProduct() throws Exception{
         Faker faker = new Faker();
-        Product product = Product.builder().id(1L).stock(500).name("product").image(faker.lorem().sentence()).price(500).build();
+        Product product = Product.builder().id(1L).stock(500).name("product").price(500).build();
 
         doNothing().when(productService).deleteProduct("product");
 
@@ -132,7 +134,7 @@ class ProductResourceTest {
     @Test
     public void getProductByName() throws Exception {
         Faker faker = new Faker();
-        Product product = Product.builder().name("telefon").price(500).id(1L).stock(500).image(faker.leagueOfLegends().champion()).build();
+        Product product = Product.builder().name("telefon").price(500).id(1L).stock(500).build();
 
         doReturn(product).when(productService).getProductbyName("telefon");
 

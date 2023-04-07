@@ -66,7 +66,8 @@ class ProductServiceTest {
 
     @Test
     public void addProductOk(){
-        ProductDTO productDTO = ProductDTO.builder().name("Microphone trust gxt").stock(198).price(650).image("https://www.images.com/microphone-trust-gxt").build();
+
+        ProductDTO productDTO = ProductDTO.builder().name("Microphone trust gxt").image(new byte[23]).stock(198).price(650).build();
 
         Product m = Product.builder().name(productDTO.getName())
                 .price(productDTO.getPrice())
@@ -95,7 +96,7 @@ class ProductServiceTest {
 
     @Test
     public void deleteProductOk(){
-        Product product = Product.builder().id(1L).price(640).name("Razer Microphone for streaming").stock(400).image("https://www.images.com/razer-microphone-streaming").build();
+        Product product = Product.builder().id(1L).price(640).name("Razer Microphone for streaming").image(new byte[23]).stock(400).build();
         productRepo.save(product);
 
 
@@ -119,7 +120,7 @@ class ProductServiceTest {
 
     @Test
     public void getProductbyNameOk(){
-        Product product= Product.builder().id(1L).name("Seagate Portable 2TB External Hard Drive HDD ").price(300).stock(600).image("https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T2/images/I/81tjLksKixL._AC_UL320_.jpg").build();
+        Product product= Product.builder().id(1L).name("Seagate Portable 2TB External Hard Drive HDD ").price(300).image(new byte[23]).stock(600).build();
 
         productRepo.save(product);
 

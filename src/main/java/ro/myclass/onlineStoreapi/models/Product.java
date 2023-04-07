@@ -47,12 +47,10 @@ public class Product {
     columnDefinition = "DOUBLE")
     private double price;
 
-    @Column(name = "image",
-    nullable = false,
-    columnDefinition = "TEXT")
+    @Column(name = "image",length = 1000)
     @NotEmpty
 
-    private String image;
+    private byte[]image;
 
     @Column(name = "stock",
     nullable = false,

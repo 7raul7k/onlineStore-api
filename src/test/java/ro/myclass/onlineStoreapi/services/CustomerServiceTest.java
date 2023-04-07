@@ -144,7 +144,7 @@ class CustomerServiceTest {
         Customer customer = Customer.builder().id(1L).fullName("Andrei Florin").email("andreiflorin@gmail.com").password("andreiflorin2023").build();
 
 
-        Product product = Product.builder().id(1L).name("TV samsung 40 inch 4K").image("https://www.images.com/tv-samsung-40-inch-4k").stock(300).price(2500).build();
+        Product product = Product.builder().id(1L).name("TV samsung 40 inch 4K").stock(300).price(2500).build();
 
 
 
@@ -203,7 +203,7 @@ class CustomerServiceTest {
 
         List<ProductCardRequest> list = new ArrayList<>();
 
-        Product product = Product.builder().stock(1).id(2L).price(250).image("test").name("casti").build();
+        Product product = Product.builder().stock(1).id(2L).price(250).name("casti").build();
 
         list.add(ProductCardRequest.builder().productId(2).quantity(9).build());
 
@@ -225,7 +225,7 @@ class CustomerServiceTest {
 
         Order order = Order.builder().id(1L).orderDate(LocalDate.now()).customer(customer).build();
 
-        Product product = Product.builder().id(1L).name("Iphone 14X").price(5000).stock(250).image("https://www.images.com/iphone-14-x").build();
+        Product product = Product.builder().id(1L).name("Iphone 14X").price(5000).stock(250).build();
 
 
 
@@ -267,7 +267,7 @@ class CustomerServiceTest {
         Customer customer = Customer.builder().id(1L).fullName("Popa Iulian").email("popaiulian@gmail.com").password("popaiulian2023").build();
 
 
-        Product product = Product.builder().id(1L).name("Apple watch 210").image("https://www.images.com/apple-watch-210").stock(200).price(800).build();
+        Product product = Product.builder().id(1L).name("Apple watch 210").stock(200).price(800).build();
 
 
 

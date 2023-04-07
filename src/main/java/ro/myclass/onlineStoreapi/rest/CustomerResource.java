@@ -159,6 +159,13 @@ public ResponseEntity<CreateOrderResponse> addOrder(@RequestBody CreateOrderRequ
         return new ResponseEntity<>(new CreateOrderResponse("Descarcat cu succes"),HttpStatus.OK);
     }
 
+
+    @GetMapping("/getSortedOrderListByDate/{customerId}")
+    public ResponseEntity<List<OrderDetail>> generateSortedOrderListByDate(@PathVariable int customerId){
+        List<OrderDetail> orderDetails = this.customerService.sortOrderByLocalDate(customerId);
+
+        return new ResponseEntity<>(orderDetails,HttpStatus.OK);
+    }
 }
 
 

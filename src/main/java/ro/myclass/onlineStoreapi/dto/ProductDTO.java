@@ -17,7 +17,7 @@ public class ProductDTO {
  private String name;
     private double price;
     @NotEmpty
-    private String image;
+    private byte[] image;
     private int stock;
 
 }
