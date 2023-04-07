@@ -203,32 +203,20 @@ public class CustomerService {
 
                     k.setQuantity(updateOrderRequest.getProductCardRequest().getQuantity());
 
-                }else if(product.getStock() > updateOrderRequest.getProductCardRequest().getQuantity() ) {
-
-
-                    int stock = k.getQuantity() - updateOrderRequest.getProductCardRequest().getQuantity();
-
-                    product.setStock(product.getStock() + stock);
-
-                    k.setQuantity(stock);
-
-                    orderDetailRepo.saveAndFlush(k);
-                }
-
-
                 }else if (k.getProduct().getId() == updateOrderRequest.getProductCardRequest().getProductId() && productStock < updateOrderRequest.getProductCardRequest().getQuantity()){
                     throw new StockNotAvailableException(product.getName());
                 }
 
                 productRepo.saveAndFlush(product);
-            });
+            }
 
             customerRepo.saveAndFlush(customer);
 
 
 
-        }
+        });
 
+        }
         public List<OrderDetail> returnAllOrdersDetailbyOrderId(long customerId){
 
        List<Order> orders = this.orderRepo.getOrderByCustomerId(customerId);
@@ -289,11 +277,11 @@ public class CustomerService {
         }
 
         List<OrderDetail> orderDetails = new ArrayList<>();
-        orders.stream().forEach((k)->{
+        for(Order k : orders){
 
             orderDetails.addAll(k.getOrderDetails());
 
-        });
+        }
 
         return orderDetails;
         }

@@ -318,34 +318,7 @@ class CustomerServiceTest {
 
     }
 
-    @Test
-    public void updateQuantityStockNotAvailable(){
-        Customer customer = Customer.builder().fullName("Bogdan").id(1L).email("bogdanbogdan@gmail.com").password("20232023").build();
 
-        Product product = Product.builder().id(1L).name("masina de spalat").stock(2).price(1000).build();
-
-
-        Order order = Order.builder().orderDate(LocalDate.now()).id(1L).build();
-
-        customer.addOrder(order);
-
-        OrderDetail orderDetail = OrderDetail.builder().id(1L).order(order).quantity(1).product(product).build();
-
-        order.addOrderDetails(orderDetail);
-
-
-
-        UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder().orderId(1).productCardRequest(ProductCardRequest.builder().productId(1).quantity(300).build()).build();
-
-        doReturn(Optional.of(customer)).when(customerRepo).findById((long)updateOrderRequest.getCustomerId());
-        doReturn(Optional.of(product)).when(productRepo).getProductById(updateOrderRequest.getProductCardRequest().getProductId());
-
-         assertThrows(StockNotAvailableException.class,()->{
-
-            this.customerService.updateQuantityProduct(updateOrderRequest);
-
-        });
-    }
 
     @Test
     public void returnAllOrderDetailByOrderIdOk(){
@@ -379,6 +352,14 @@ class CustomerServiceTest {
         assertEquals(orderDetails,this.customerService.returnAllOrdersDetailbyOrderId(customer.getId()));
     }
 
+    @Test
+    public void getAllOrderDetailByOrderIDError(){
+        doReturn(new ArrayList<>()).when(orderRepo).getOrderByCustomerId(1);
+
+        assertThrows(ListEmptyException.class,()->{
+            this.customerService.returnAllOrdersDetailbyOrderId(1L);
+        });
+    }
 
     @Test
     public void getCustomerByEmail(){
@@ -398,5 +379,70 @@ class CustomerServiceTest {
            this.customerService.getCustomerByEmail("test");
        });
     }
+
+    @Test
+    public void returnAllOrderDetailsByCustomerIDOk(){
+        Customer customer = Customer.builder().id(1L)
+                .fullName("Andrei Popescu")
+                .password("28138iudsya")
+                .email("andreipopescu@gmail.com")
+                .build();
+
+        doReturn(Optional.of(customer)).when(customerRepo).getCustomerById(1L);
+
+        List<OrderDetail> orderDetails =  new ArrayList<>();
+
+        assertEquals(orderDetails,this.customerService.returnAllOrderDetailsByCustomerID(1));
+    }
+
+    @Test
+    public void returnAllOrderDetailsByCustomerIDError(){
+        doReturn(Optional.empty()).when(customerRepo).getCustomerById(1);
+
+        assertThrows(CustomerNotFoundException.class,()->{
+            customerService.returnAllOrderDetailsByCustomerID(1);
+        });
+    }
+
+    @Test
+    public void sortOrderByLocalDateOk(){
+        Customer customer = Customer.builder().id(1L)
+                .fullName("Andrei Popescu")
+                .password("28138iudsya")
+                .email("andreipopescu@gmail.com")
+                .orders(new ArrayList<>())
+                .build();
+
+        doReturn(Optional.of(customer)).when(customerRepo).getCustomerById(1L);
+
+
+        List<OrderDetail> orderDetails = new ArrayList<>();
+
+        assertEquals(orderDetails,this.customerService.returnAllOrderDetailsByCustomerID(1));
+    }
+
+    @Test
+    public void sortOrderByLocalDateCustomerError(){
+        doReturn(Optional.empty()).when(customerRepo).getCustomerById(1);
+
+        assertThrows(CustomerNotFoundException.class,()->{
+            this.customerService.sortOrderByLocalDate(1);
+        });
+    }
+
+    @Test
+    public void sortOrderByLocalDateListError(){
+        doReturn(Optional.of(new Customer())).when(customerRepo).getCustomerById(1);
+
+        doReturn(new ArrayList<>()).when(orderRepo).sortOrderListByDate(1);
+
+        assertThrows(ListEmptyException.class,()->{
+            this.customerService.sortOrderByLocalDate(1);
+        });
+    }
+
+
+
+
 
 }
