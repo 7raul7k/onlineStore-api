@@ -29,15 +29,13 @@ public class CustomerService {
 
     private OrderRepo orderRepo;
 
-    private OrderDetailRepo orderDetailRepo;
 
     private ProductRepo productRepo;
 
-    public CustomerService(CustomerRepo customerRepo, OrderRepo orderRepo, OrderDetailRepo orderDetailRepo, ProductRepo productRepo) {
+    public CustomerService(CustomerRepo customerRepo, OrderRepo orderRepo,ProductRepo productRepo) {
 
         this.customerRepo = customerRepo;
         this.orderRepo = orderRepo;
-        this.orderDetailRepo = orderDetailRepo;
         this.productRepo = productRepo;
     }
     @Transactional
@@ -234,18 +232,15 @@ public class CustomerService {
           });
 
        }
-
        return orderDetails;
 
         }
 
         public List<OrderDetail> returnAllOrderDetailsByCustomerID(int customerId){
         Optional<Customer> customerOptional = this.customerRepo.getCustomerById((long) customerId);
-
         if(customerOptional.isEmpty()){
             throw new CustomerNotFoundException();
         }
-
         Customer customer = customerOptional.get();
         List<Order> orders = customer.getOrders();
 
@@ -256,7 +251,6 @@ public class CustomerService {
 
         }));
 
-
         return orderDetailList;
 
         }
@@ -264,7 +258,6 @@ public class CustomerService {
         public List<OrderDetail> sortOrderByLocalDate(int customerID){
 
         Optional<Customer> customer = this.customerRepo.getCustomerById(customerID);
-
         if(customer.isEmpty()){
 
             throw new CustomerNotFoundException();
@@ -275,14 +268,10 @@ public class CustomerService {
         if(orders.isEmpty()){
             throw new ListEmptyException();
         }
-
         List<OrderDetail> orderDetails = new ArrayList<>();
         for(Order k : orders){
-
             orderDetails.addAll(k.getOrderDetails());
-
         }
-
         return orderDetails;
         }
 
