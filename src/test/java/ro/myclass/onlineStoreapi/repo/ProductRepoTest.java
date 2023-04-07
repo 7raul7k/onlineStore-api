@@ -41,8 +41,8 @@ class ProductRepoTest {
 
         Product product = Product.builder().name("casti gaming razer")
                 .price(400)
+                .image(new byte[23])
                 .stock(500)
-                .image("https://www.linkpicture.com/en/")
                 .build();
 
         productRepo.save(product);
@@ -52,10 +52,10 @@ class ProductRepoTest {
 
     @Test
     public void getAllProducts(){
-        Product product =  Product.builder().name("casti gaming steelseries").price(400).image("https://www.linkpicture.com/en/").stock(500).build();
-        Product product1 = Product.builder().name("tastatura gaming steelseries").price(900).image("https://www.linkpicture.com/en/").stock(900).build();
-        Product product2 = Product.builder().name("mouse gaming Razer").price(150).stock(40).image("https://www.linkpicture.com/en/").build();
-        Product product3 = Product.builder().name("televizor samsung 40 inch ").price(1500).image("https://www.linkpicture.com/en/").stock(472).build();
+        Product product =  Product.builder().name("casti gaming steelseries").price(400).stock(500).build();
+        Product product1 = Product.builder().name("tastatura gaming steelseries").price(900).stock(900).build();
+        Product product2 = Product.builder().name("mouse gaming Razer").price(150).stock(40).build();
+        Product product3 = Product.builder().name("televizor samsung 40 inch ").price(1500).stock(472).build();
 
         List<Product> list = new ArrayList<>();
         list.add(product);
@@ -75,7 +75,7 @@ class ProductRepoTest {
     public void getOrderDetailByProductIdAndPrice(){
         Product product = Product.builder().name("casti gaming HyperX")
                 .stock(400)
-                .image("https://wwww.picsart.ro/casti-gaming-hyperx")
+                .image(new byte[23])
                 .price(500)
                 .build();
 

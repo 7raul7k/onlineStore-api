@@ -44,9 +44,9 @@ public class ProductPDFGenerator {
     public void writeTableData(PdfPTable table){
         for(Product product : productList){
             table.addCell(String.valueOf(product.getId()));
-            table.addCell(product.getImage());
+            table.addCell(String.valueOf(product.getImage()));
             table.addCell(String.valueOf(product.getPrice()));
-            table.addCell(product.getImage());
+            table.addCell(String.valueOf(product.getImage()));
             table.addCell(String.valueOf(product.getStock()));
         }
 
@@ -66,7 +66,7 @@ public class ProductPDFGenerator {
 
         PdfPTable pdfPTable = new PdfPTable(5);
         pdfPTable.setWidthPercentage(100f);
-        pdfPTable.setWidths(new int[]{1,1,3,2});
+        pdfPTable.setWidths(new int[]{1,1,3,2,4});
         pdfPTable.setSpacingBefore(5);
 
         writeTableHeader(pdfPTable);

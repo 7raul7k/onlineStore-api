@@ -43,7 +43,6 @@ class OrderDetailRepoTest {
                 .id(2L)
                 .stock(600)
                 .price(300)
-                .image("https://linkpicture.com/en/?")
                 .build();
         Order order = Order.builder().customer(Customer.builder().fullName("Eduard Miculescu").email("eduardmiculescu@gmail.com").password("eduardeduard").build()).id(1L).build();
         OrderDetail  orderDetail=OrderDetail.builder().quantity(2).product(product).price(600.0).order(order).build();

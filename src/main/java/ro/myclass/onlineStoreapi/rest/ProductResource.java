@@ -4,6 +4,7 @@ import com.lowagie.text.DocumentException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ro.myclass.onlineStoreapi.PDFGenerator.ProductPDFGenerator;
 import ro.myclass.onlineStoreapi.dto.CancelOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CreateOrderResponse;
@@ -61,7 +62,7 @@ public class ProductResource {
 
     }
 
-    @GetMapping("/exportPDF")
+    @GetMapping(value = "/exportPDF",produces = { "*/*" })
         public ResponseEntity<CreateOrderResponse> generator(HttpServletResponse response) throws DocumentException,IOException {
         response.setContentType("application/pdf");
 
@@ -79,6 +80,15 @@ public class ProductResource {
         generator.generate(response);
 
         return new ResponseEntity<>( new CreateOrderResponse("Descarcat cu succes"), HttpStatus.OK);
+
+        }
+
+        @PostMapping("/uploadImage")
+        public ResponseEntity<CreateOrderResponse> uploadImage(@RequestParam("image")MultipartFile file,@RequestParam String productName) throws IOException{
+            this.productService.uploadImage(productName,file);
+
+            return new ResponseEntity<>(new CreateOrderResponse("Adaugat cu succes"),HttpStatus.OK);
+
 
         }
 
