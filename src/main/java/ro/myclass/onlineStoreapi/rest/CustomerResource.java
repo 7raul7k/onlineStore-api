@@ -139,13 +139,13 @@ public ResponseEntity<CreateOrderResponse> addOrder(@RequestBody CreateOrderRequ
     }
 
     @GetMapping("/exportBillPDF")
-    public ResponseEntity<CreateOrderResponse> generateBillPDF(@RequestParam String email, HttpServletResponse response) throws IOException {
+    public ResponseEntity<CreateOrderResponse> generateBillPDF(HttpServletResponse response,@RequestParam String email) throws IOException {
         response.setContentType("application/pdf");
         DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD:HH:MM:SS");
         String currentDate = dateFormat.format(new Date());
 
         String headerKey= "Content-Disposition";
-        String headerValue = "attachment;filename = billorderpdf_" + currentDate + ".pdf";
+        String headerValue = "attachment;filename=billorderpdf_" + currentDate + ".pdf";
 
         response.setHeader(headerKey,headerValue);
 

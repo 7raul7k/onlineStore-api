@@ -44,7 +44,7 @@ public class ProductPDFGenerator {
     public void writeTableData(PdfPTable table){
         for(Product product : productList){
             table.addCell(String.valueOf(product.getId()));
-            table.addCell(String.valueOf(product.getImage()));
+            table.addCell(product.getName());
             table.addCell(String.valueOf(product.getPrice()));
             table.addCell(String.valueOf(product.getImage()));
             table.addCell(String.valueOf(product.getStock()));

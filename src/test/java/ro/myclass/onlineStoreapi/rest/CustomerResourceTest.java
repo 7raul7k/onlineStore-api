@@ -1,6 +1,5 @@
 package ro.myclass.onlineStoreapi.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,25 +10,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ro.myclass.onlineStoreapi.dto.*;
-import ro.myclass.onlineStoreapi.exceptions.*;
+import ro.myclass.onlineStoreapi.exceptions.CustomerNotFoundException;
+import ro.myclass.onlineStoreapi.exceptions.CustomerWasFoundException;
+import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.models.Order;
 import ro.myclass.onlineStoreapi.models.OrderDetail;
 import ro.myclass.onlineStoreapi.models.Product;
 import ro.myclass.onlineStoreapi.services.CustomerService;
 
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -257,5 +253,7 @@ class CustomerResourceTest {
        restMockMvc.perform(get("/api/v1/customer/getSortedOrderListByDate/1").contentType(MediaType.APPLICATION_JSON))
                .andExpect(status().isBadRequest());
    }
+
+
 }
 
