@@ -29,15 +29,13 @@ public class CustomerService {
 
     private OrderRepo orderRepo;
 
-    private OrderDetailRepo orderDetailRepo;
 
     private ProductRepo productRepo;
 
-    public CustomerService(CustomerRepo customerRepo, OrderRepo orderRepo, OrderDetailRepo orderDetailRepo, ProductRepo productRepo) {
+    public CustomerService(CustomerRepo customerRepo, OrderRepo orderRepo,ProductRepo productRepo) {
 
         this.customerRepo = customerRepo;
         this.orderRepo = orderRepo;
-        this.orderDetailRepo = orderDetailRepo;
         this.productRepo = productRepo;
     }
     @Transactional
@@ -203,32 +201,20 @@ public class CustomerService {
 
                     k.setQuantity(updateOrderRequest.getProductCardRequest().getQuantity());
 
-                }else if(product.getStock() > updateOrderRequest.getProductCardRequest().getQuantity() ) {
-
-
-                    int stock = k.getQuantity() - updateOrderRequest.getProductCardRequest().getQuantity();
-
-                    product.setStock(product.getStock() + stock);
-
-                    k.setQuantity(stock);
-
-                    orderDetailRepo.saveAndFlush(k);
-                }
-
-
                 }else if (k.getProduct().getId() == updateOrderRequest.getProductCardRequest().getProductId() && productStock < updateOrderRequest.getProductCardRequest().getQuantity()){
                     throw new StockNotAvailableException(product.getName());
                 }
 
                 productRepo.saveAndFlush(product);
-            });
+            }
 
             customerRepo.saveAndFlush(customer);
 
 
 
-        }
+        });
 
+        }
         public List<OrderDetail> returnAllOrdersDetailbyOrderId(long customerId){
 
        List<Order> orders = this.orderRepo.getOrderByCustomerId(customerId);
@@ -246,18 +232,15 @@ public class CustomerService {
           });
 
        }
-
        return orderDetails;
 
         }
 
         public List<OrderDetail> returnAllOrderDetailsByCustomerID(int customerId){
         Optional<Customer> customerOptional = this.customerRepo.getCustomerById((long) customerId);
-
         if(customerOptional.isEmpty()){
             throw new CustomerNotFoundException();
         }
-
         Customer customer = customerOptional.get();
         List<Order> orders = customer.getOrders();
 
@@ -268,7 +251,6 @@ public class CustomerService {
 
         }));
 
-
         return orderDetailList;
 
         }
@@ -276,7 +258,6 @@ public class CustomerService {
         public List<OrderDetail> sortOrderByLocalDate(int customerID){
 
         Optional<Customer> customer = this.customerRepo.getCustomerById(customerID);
-
         if(customer.isEmpty()){
 
             throw new CustomerNotFoundException();
@@ -287,14 +268,10 @@ public class CustomerService {
         if(orders.isEmpty()){
             throw new ListEmptyException();
         }
-
         List<OrderDetail> orderDetails = new ArrayList<>();
-        orders.stream().forEach((k)->{
-
+        for(Order k : orders){
             orderDetails.addAll(k.getOrderDetails());
-
-        });
-
+        }
         return orderDetails;
         }
 

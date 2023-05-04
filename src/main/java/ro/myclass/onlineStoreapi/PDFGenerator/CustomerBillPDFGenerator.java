@@ -5,14 +5,11 @@ import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.*;
 import ro.myclass.onlineStoreapi.models.Customer;
-import ro.myclass.onlineStoreapi.models.Order;
 import ro.myclass.onlineStoreapi.models.OrderDetail;
-import ro.myclass.onlineStoreapi.models.Product;
 
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerBillPDFGenerator {

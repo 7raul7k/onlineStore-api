@@ -42,13 +42,14 @@ public class ProductService {
     }
 
     @Transactional
+    @Modifying
     public void addProduct(ProductDTO productDTO){
         Optional<Product> product = this.productRepo.getProductByName(productDTO.getName());
 
         if(product.isEmpty()){
             Product m = Product.builder().name(productDTO.getName())
+                    .image(new byte[24])
                     .price(productDTO.getPrice())
-                    .image(productDTO.getImage())
                     .stock(productDTO.getStock())
                     .build();
 

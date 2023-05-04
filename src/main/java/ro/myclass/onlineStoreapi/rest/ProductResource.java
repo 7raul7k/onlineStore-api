@@ -84,7 +84,7 @@ public class ProductResource {
         }
 
         @PostMapping("/uploadImage")
-        public ResponseEntity<CreateOrderResponse> uploadImage(@RequestParam("image")MultipartFile file,@RequestParam String productName) throws IOException{
+        public ResponseEntity<CreateOrderResponse> uploadImage(MultipartFile file,@RequestParam String productName) throws IOException{
             this.productService.uploadImage(productName,file);
 
             return new ResponseEntity<>(new CreateOrderResponse("Adaugat cu succes"),HttpStatus.OK);
