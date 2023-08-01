@@ -144,6 +144,51 @@ public class OrderService {
 
     }
 
+    public List<Order> getOrderByCustomerId(int customerId){
+
+        List<Order> orderList = this.orderRepo.getOrderByCustomerId(customerId);
+
+        if(orderList.isEmpty()){
+            throw new ListEmptyException();
+        }else{
+            return orderList;
+        }
+    }
+
+    public Order getOrderbyIdAndCustomerId(long orderId,long customerId){
+
+        Optional<Order> order = this.orderRepo.getOrderByIdAndCustomerId(orderId,customerId);
+
+        if(order.isEmpty()){
+            throw new OrderNotFoundException();
+        }else{
+            return order.get();
+        }
+    }
+
+    public Order getOrderById(long id){
+
+        Optional<Order> order = this.orderRepo.getOrderById(id);
+
+        if(order.isEmpty()){
+            throw new OrderNotFoundException();
+        }else{
+            return order.get();
+        }
+    }
+
+    public List<Order> sortOrderListByDate(int customerId){
+
+        List<Order> orderList = this.orderRepo.sortOrderListByDate(customerId);
+        if(orderList.isEmpty()){
+            throw new OrderNotFoundException();
+        }else{
+            return orderList;
+        }
+    }
+
+
+
 
 
 }
