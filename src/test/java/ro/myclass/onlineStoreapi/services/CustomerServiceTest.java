@@ -181,6 +181,9 @@ class CustomerServiceTest {
 
        ProductCardRequest productCardRequest = ProductCardRequest.builder().productId(1).quantity(1).build();
 
+       List<ProductCardRequest> productCardRequests = new ArrayList<>();
+
+       productCardRequests.add(productCardRequest);
        UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder().orderId(1).productCardRequest(productCardRequest).customerId(1).build();
 
        this.customerService.updateQuantityProduct(updateOrderRequest);

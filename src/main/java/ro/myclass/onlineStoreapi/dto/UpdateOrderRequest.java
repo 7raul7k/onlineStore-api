@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,5 +13,5 @@ public class UpdateOrderRequest {
 
     int customerId;
     int orderId;
-    List<ProductCardRequest> productCardRequest;
+    ProductCardRequest productCardRequest;
 }

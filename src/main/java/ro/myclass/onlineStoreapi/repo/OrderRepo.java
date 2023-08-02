@@ -24,6 +24,9 @@ public interface OrderRepo extends JpaRepository<Order,Long> {
    @Query("select o from Order o where o.customer.id = ?1 order by o.orderDate ASC")
     List<Order> sortOrderListByDate(long customerID);
 
+   @Query("select o from Order o")
+   List<Order> getAllOrder();
+
 
 
 

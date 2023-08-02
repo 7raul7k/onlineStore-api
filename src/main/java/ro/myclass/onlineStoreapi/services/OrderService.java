@@ -22,19 +22,22 @@ import java.util.Optional;
 @Service
 public class OrderService {
 
-    public OrderRepo orderRepo;
+    private OrderRepo orderRepo;
 
-    public CustomerRepo customerRepo;
+    private CustomerRepo customerRepo;
 
-    public ProductRepo productRepo;
+    private ProductRepo productRepo;
 
-    public OrderService(OrderRepo orderRepo) {
+
+    public OrderService(OrderRepo orderRepo, CustomerRepo customerRepo, ProductRepo productRepo) {
         this.orderRepo = orderRepo;
+        this.customerRepo = customerRepo;
+        this.productRepo = productRepo;
     }
 
-    public List<Order> getAllOrder(){
+    public List<Order>  getAllOrder(){
 
-        List<Order> orders = this.orderRepo.findAll();
+        List<Order> orders = this.orderRepo.getAllOrder();
 
         if(orders.isEmpty()){
             throw new ListEmptyException();
@@ -92,7 +95,7 @@ public class OrderService {
         customer1.addOrder(order);
         this.orderRepo.save(order);
 
-        customerRepo.saveAndFlush(customer1);
+
 
     }
 
@@ -119,7 +122,7 @@ public class OrderService {
 
         customer.getOrders().remove(order);
 
-        customerRepo.saveAndFlush(customer);
+       this.orderRepo.delete(order);
 
     }
 
