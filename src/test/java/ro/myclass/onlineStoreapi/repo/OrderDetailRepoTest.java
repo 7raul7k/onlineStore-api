@@ -1,27 +1,12 @@
 package ro.myclass.onlineStoreapi.repo;
 
-import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import ro.myclass.onlineStoreapi.OnlineStoreApiApplication;
-import ro.myclass.onlineStoreapi.dto.CustomerDTO;
-import ro.myclass.onlineStoreapi.dto.ProductDTO;
-import ro.myclass.onlineStoreapi.models.Customer;
-import ro.myclass.onlineStoreapi.models.Order;
-import ro.myclass.onlineStoreapi.models.OrderDetail;
-import ro.myclass.onlineStoreapi.models.Product;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = OnlineStoreApiApplication.class)
@@ -36,21 +21,7 @@ class OrderDetailRepoTest {
 
     }
 
-    @Test
-    public void getOrderDetailByProductIdAndPrice(){
 
-        Product product = Product.builder().name("mouse lg s2314j")
-                .id(2L)
-                .stock(600)
-                .price(300)
-                .build();
-        Order order = Order.builder().customer(Customer.builder().fullName("Eduard Miculescu").email("eduardmiculescu@gmail.com").password("eduardeduard").build()).id(1L).build();
-        OrderDetail  orderDetail=OrderDetail.builder().quantity(2).product(product).price(600.0).order(order).build();
-
-        orderDetailRepo.save(orderDetail);
-
-        assertEquals(orderDetail,this.orderDetailRepo.getOrderDetailByProductIdAndPrice(product.getId(), orderDetail.getPrice()).get() );
-    }
 
 //    @Test
 //    public void findOrderDetailByProductId(){

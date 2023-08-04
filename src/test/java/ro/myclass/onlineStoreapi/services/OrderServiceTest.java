@@ -46,8 +46,7 @@ class OrderServiceTest {
     @InjectMocks
     OrderService orderService;
 
-    @InjectMocks
-    CustomerService customerService;
+
 
     @Captor
     ArgumentCaptor<Order> captor;

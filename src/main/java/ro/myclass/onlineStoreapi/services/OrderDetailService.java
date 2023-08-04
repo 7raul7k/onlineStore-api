@@ -5,12 +5,15 @@ import ro.myclass.onlineStoreapi.dto.CreateOrderDetailRequest;
 import ro.myclass.onlineStoreapi.exceptions.CustomerNotFoundException;
 import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
 import ro.myclass.onlineStoreapi.exceptions.OrderNotFoundException;
+import ro.myclass.onlineStoreapi.exceptions.ProductNotFoundException;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.models.Order;
 import ro.myclass.onlineStoreapi.models.OrderDetail;
+import ro.myclass.onlineStoreapi.models.Product;
 import ro.myclass.onlineStoreapi.repo.CustomerRepo;
 import ro.myclass.onlineStoreapi.repo.OrderDetailRepo;
 import ro.myclass.onlineStoreapi.repo.OrderRepo;
+import ro.myclass.onlineStoreapi.repo.ProductRepo;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -25,11 +28,14 @@ public class OrderDetailService {
 
     private CustomerRepo customerRepo;
 
+    private ProductRepo productRepo;
 
-    public OrderDetailService(OrderDetailRepo orderDetailRepo, OrderRepo orderRepo, CustomerRepo customerRepo) {
+
+    public OrderDetailService(OrderDetailRepo orderDetailRepo, OrderRepo orderRepo, CustomerRepo customerRepo, ProductRepo productRepo) {
         this.orderDetailRepo = orderDetailRepo;
         this.orderRepo = orderRepo;
         this.customerRepo = customerRepo;
+        this.productRepo = productRepo;
     }
 
     public List<OrderDetail> getAllOrderDetail(){
@@ -44,7 +50,7 @@ public class OrderDetailService {
     }
 
     @Transactional
-    public void addOrderDetail(CreateOrderDetailRequest orderDetailRequest){
+    public void addOrderDetail(CreateOrderDetailRequest orderDetailRequest) throws Exception {
 
         Optional<Customer> customerOptional = this.customerRepo.getCustomerById(orderDetailRequest.getCustomerId());
 
@@ -61,23 +67,40 @@ public class OrderDetailService {
         }
 
 
-        Optional<OrderDetail> orderDetail= this.orderDetailRepo.findOrderDetailByProductIdAndOrderId(orderDetailRequest.getOrderDetail().getProduct().getId(), orderDetailRequest.getOrderId());
+        Optional<OrderDetail> orderDetail= this.orderDetailRepo.findOrderDetailByProductIdAndOrderId(orderDetailRequest.getProductId(), orderDetailRequest.getOrderId());
 
-        OrderDetail orderDetailUpdate = orderDetailRequest.getOrderDetail();
-
-        if(orderDetailUpdate.getPrice()  > 0){
-            orderDetail.get().setPrice(orderDetailUpdate.getPrice());
-        }if(orderDetailUpdate.getQuantity() > 0){
-
-            orderDetail.get().setQuantity(orderDetailUpdate.getQuantity());
-        }if(orderDetailUpdate.getOrder() !=null){
-        orderDetail.get().setOrder(orderOptional.get());
+        if(orderDetail.isEmpty()){
+            throw new OrderNotFoundException();
         }
+
+        Optional<Product> product = this.productRepo.getProductByName(orderDetail.get().getProduct().getName());
+
+        if(product.isEmpty()){
+            throw new ProductNotFoundException();
+        }
+
+        if(orderDetailRequest.getPrice()  > 0){
+            orderDetail.get().setPrice(orderDetailRequest.getPrice());
+        }if(orderDetailRequest.getQuantity() > 0) {
+
+            if(orderDetailRequest.getQuantity() > product.get().getStock()){
+                throw new Exception("Stock not available");
+            }else{
+                product.get().setStock(product.get().getStock()-orderDetailRequest.getQuantity());
+            }
+
+            orderDetail.get().setQuantity(orderDetailRequest.getQuantity());
+
+            productRepo.save(product.get());
+
+        }
+
+        orderDetail.get().setOrder(orderOptional.get());
+
 
         orderDetailRepo.saveAndFlush(orderDetail.get());
 
     }
-
     @Transactional
     public void deleteOrderDetail(int productId,int orderId){
 
@@ -93,7 +116,7 @@ public class OrderDetailService {
 
     public OrderDetail  findOrderDetailByProductIdAndOrderId(long productId,long orderId){
 
-        Optional<OrderDetail> orderDetail = this.orderDetailRepo.getOrderDetailByProductIdAndPrice(productId,orderId);
+        Optional<OrderDetail> orderDetail = this.orderDetailRepo.findOrderDetailByProductIdAndOrderId(productId,orderId);
 
         if(orderDetail.isEmpty()){
 
@@ -103,17 +126,6 @@ public class OrderDetailService {
         }
     }
 
-    public OrderDetail getOrderDetailByProductIdAndPrice(long productID,double price){
 
-        Optional<OrderDetail> orderDetail = this.orderDetailRepo.getOrderDetailByProductIdAndPrice(productID,price);
-
-        if(orderDetail.isEmpty()){
-
-            throw new OrderNotFoundException();
-        }else{
-            return orderDetail.get();
-        }
-
-    }
 
 }
