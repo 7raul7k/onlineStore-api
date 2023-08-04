@@ -10,10 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ro.myclass.onlineStoreapi.dto.CancelOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CreateOrderRequest;
 import ro.myclass.onlineStoreapi.dto.ProductCardRequest;
-import ro.myclass.onlineStoreapi.exceptions.CustomerNotFoundException;
-import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
-import ro.myclass.onlineStoreapi.exceptions.ProductNotFoundException;
-import ro.myclass.onlineStoreapi.exceptions.StockNotAvailableException;
+import ro.myclass.onlineStoreapi.exceptions.*;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.models.Order;
 import ro.myclass.onlineStoreapi.models.OrderDetail;
@@ -209,6 +206,143 @@ class OrderServiceTest {
         });
 
     }
+
+    @Test
+    public void updateOrder(){
+        Customer customer = Customer.builder().id(1L).fullName("Stoica Ionut").email("stoicaionut@gmail.com").password("stoicaionut2023").build();
+
+        Order order = Order.builder().id(1L).orderDate(LocalDate.now()).customer(customer).build();
+
+        doReturn(Optional.of(order)).when(orderRepo).getOrderByIdAndCustomerId(1L,1L);
+
+        this.orderService.updateOrder(order);
+        verify(orderRepo,times(1)).saveAndFlush(captor.capture());
+
+        assertEquals(captor.getValue(),order);
+
+    }
+
+    @Test
+    public void updateOrderError(){
+        Customer customer = Customer.builder().id(1L).fullName("test").password("test").email("test").build();
+
+
+        doReturn(Optional.empty()).when(orderRepo).getOrderByIdAndCustomerId(1L,1L);
+
+        assertThrows(OrderNotFoundException.class,()->{
+            this.orderService.updateOrder(Order.builder().customer(customer).orderDate(LocalDate.now()).id(1L).build());
+        });
+    }
+
+    @Test
+    public void getOrderByCustomerId(){
+        Customer customer = Customer.builder().id(1L).fullName("Stoica Ionut").email("stoicaionut@gmail.com").password("stoicaionut2023").build();
+
+        Order order = Order.builder().id(1L).orderDate(LocalDate.now()).customer(customer).build();
+        Order order2 = Order.builder().id(2L).orderDate(LocalDate.now()).customer(customer).build();
+        Order order3 = Order.builder().id(3L).orderDate(LocalDate.now()).customer(customer).build();
+
+        List<Order> orderList = new ArrayList<>();
+
+        orderList.add(order);
+        orderList.add(order2);
+        orderList.add(order3);
+        doReturn(orderList).when(orderRepo).getOrderByCustomerId(1L);
+
+        assertEquals(orderList,this.orderService.getOrderByCustomerId(1));
+
+
+    }
+
+    @Test
+    public void getOrderByCustomerIdError(){
+
+        doReturn(new ArrayList<>()).when(orderRepo).getOrderByCustomerId(1L);
+
+        assertThrows(ListEmptyException.class,()->{
+            this.orderService.getOrderByCustomerId(1);
+        });
+    }
+
+    @Test
+    public void getOrderByIdAndCustomerID(){
+
+        Customer customer = Customer.builder().id(1L).fullName("Stoica Ionut").email("stoicaionut@gmail.com").password("stoicaionut2023").build();
+
+        Order order = Order.builder().id(1L).orderDate(LocalDate.now()).customer(customer).build();
+
+
+        doReturn(Optional.of(order)).when(orderRepo).getOrderByIdAndCustomerId(1L,1L);
+
+        assertEquals(order,this.orderService.getOrderbyIdAndCustomerId(1,1));
+
+
+    }
+
+    @Test
+    public void getOrderByIdAndCustomerIdError(){
+
+
+        doReturn(Optional.empty()).when(orderRepo).getOrderByIdAndCustomerId(1L,1L);
+
+        assertThrows(OrderNotFoundException.class,()->{
+            this.orderService.getOrderbyIdAndCustomerId(1,1);
+        });
+    }
+
+    @Test
+    public void getOrderById(){
+
+        Customer customer = Customer.builder().id(1L).fullName("Stoica Ionut").email("stoicaionut@gmail.com").password("stoicaionut2023").build();
+
+        Order order = Order.builder().id(1L).orderDate(LocalDate.now()).customer(customer).build();
+
+        doReturn(Optional.of(order)).when(orderRepo).getOrderById(1L);
+
+        assertEquals(order,this.orderService.getOrderById(1L));
+
+    }
+
+    @Test
+    public void getOrderByIdError(){
+
+        doReturn(Optional.empty()).when(orderRepo).getOrderById(1L);
+
+        assertThrows(OrderNotFoundException.class,()->{
+            this.orderService.getOrderById(1);
+        });
+    }
+
+    @Test
+    public void getSortedOrderList(){
+        Customer customer = Customer.builder().id(1L).fullName("Stoica Ionut").email("stoicaionut@gmail.com").password("stoicaionut2023").build();
+
+
+        Order order = Order.builder().id(1L).orderDate(LocalDate.now()).customer(customer).build();
+        Order order2 = Order.builder().id(2L).orderDate(LocalDate.now()).customer(customer).build();
+        Order order3 = Order.builder().id(3L).orderDate(LocalDate.now()).customer(customer).build();
+
+        List<Order> orderList = new ArrayList<>();
+
+        orderList.add(order);
+        orderList.add(order2);
+        orderList.add(order3);
+
+        doReturn(orderList).when(orderRepo).sortOrderListByDate(1L);
+
+        assertEquals(orderList,this.orderService.sortOrderListByDate(1));
+    }
+
+    @Test
+    public void getSortedOrderListError(){
+
+        doReturn(new ArrayList<>()).when(orderRepo).sortOrderListByDate(1L);
+
+        assertThrows(ListEmptyException.class,()->{
+            this.orderService.sortOrderListByDate(1);
+        });
+    }
+
 
 
 

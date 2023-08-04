@@ -184,7 +184,7 @@ public class OrderService {
 
         List<Order> orderList = this.orderRepo.sortOrderListByDate(customerId);
         if(orderList.isEmpty()){
-            throw new OrderNotFoundException();
+            throw new ListEmptyException();
         }else{
             return orderList;
         }
