@@ -3,6 +3,7 @@ package ro.myclass.onlineStoreapi.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ro.myclass.onlineStoreapi.dto.CancelOrderRequest;
@@ -55,8 +56,9 @@ public class OrderResource {
         return new ResponseEntity<>(new CreateOrderResponse("Order was deleted"),HttpStatus.OK);
     }
 
-    @PutMapping("/updateOrder")
-    public ResponseEntity<CreateOrderResponse> updateOrder(Order order){
+    @PutMapping(value = "/updateOrder",consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CreateOrderResponse> updateOrder(@RequestBody Order order){
 
         this.orderService.updateOrder(order);
 

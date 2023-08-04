@@ -127,6 +127,7 @@ public class OrderService {
     }
 
     @Transactional
+    @Modifying
     public void updateOrder(Order orderDTO){
 
         Optional<Order> order = this.orderRepo.getOrderByIdAndCustomerId(orderDTO.getId(),orderDTO.getCustomer().getId());
