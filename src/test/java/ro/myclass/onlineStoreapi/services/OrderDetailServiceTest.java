@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ro.myclass.onlineStoreapi.dto.CreateOrderDetailRequest;
+import ro.myclass.onlineStoreapi.dto.OrderDetailDTO;
 import ro.myclass.onlineStoreapi.exceptions.CustomerNotFoundException;
 import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
 import ro.myclass.onlineStoreapi.exceptions.OrderNotFoundException;
@@ -221,6 +222,58 @@ class OrderDetailServiceTest {
 
         assertThrows(OrderNotFoundException.class,()->{
             this.orderDetailService.deleteOrderDetail(1,1);
+        });
+    }
+
+    @Test
+    public void updateOrderDetail(){
+        Customer customer = Customer.builder().id(1L).fullName("Stanciu Marian").email("stanciumarian@gmail.com").password("stanciumarian2023").build();
+
+        Order order = Order.builder().id(1L).orderDate(LocalDate.now()).customer(new Customer()).build();
+
+        Product product = Product.builder().id(1L).price(640).name("Razer Microphone for streaming").image(new byte[23]).stock(400).build();
+
+        OrderDetail orderDetail = OrderDetail.builder().order(order).id(1L).quantity(100).product(product).price(200).build();
+
+        OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder().order(order).product(product).quantity(100).price(product.getPrice()).build();
+        doReturn(Optional.of(orderDetail)).when(orderDetailRepo).findOrderDetailByProductIdAndOrderId(1L,1L);
+
+        doReturn(Optional.of(product)).when(productRepo).getProductByName(product.getName());
+
+        this.orderDetailService.updateOrderDetail(orderDetailDTO);
+
+        verify(orderDetailRepo,times(1)).saveAndFlush(argumentCaptor.capture());
+
+        assertEquals(argumentCaptor.getValue(),orderDetail);
+
+    }
+
+    @Test
+    public void updateOrderDetailOrderDetailError(){
+
+        doReturn(Optional.empty()).when(orderDetailRepo).findOrderDetailByProductIdAndOrderId(1L,1L);
+
+        assertThrows(OrderNotFoundException.class,()->{
+            this.orderDetailService.updateOrderDetail(OrderDetailDTO.builder().order(Order.builder().id(1L).build()).product(Product.builder().id(1L).build()).build());
+        });
+    }
+
+    @Test
+    public void updateOrderDetailProductError(){
+
+        Customer customer = Customer.builder().id(1L).fullName("Stanciu Marian").email("stanciumarian@gmail.com").password("stanciumarian2023").build();
+
+        Order order = Order.builder().id(1L).orderDate(LocalDate.now()).customer(new Customer()).build();
+
+        Product product = Product.builder().id(1L).price(640).name("Razer Microphone for streaming").image(new byte[23]).stock(400).build();
+
+        OrderDetail orderDetail = OrderDetail.builder().order(order).id(1L).quantity(100).product(product).price(200).build();
+
+        doReturn(Optional.of(orderDetail)).when(orderDetailRepo).findOrderDetailByProductIdAndOrderId(1L,1L);
+
+        doReturn(Optional.empty()).when(productRepo).getProductByName(product.getName());
+        assertThrows(ProductNotFoundException.class,()->{
+            this.orderDetailService.updateOrderDetail(OrderDetailDTO.builder().order(order).product(product).build());
         });
     }
 

@@ -2,10 +2,8 @@ package ro.myclass.onlineStoreapi.services;
 
 import org.springframework.stereotype.Service;
 import ro.myclass.onlineStoreapi.dto.CreateOrderDetailRequest;
-import ro.myclass.onlineStoreapi.exceptions.CustomerNotFoundException;
-import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
-import ro.myclass.onlineStoreapi.exceptions.OrderNotFoundException;
-import ro.myclass.onlineStoreapi.exceptions.ProductNotFoundException;
+import ro.myclass.onlineStoreapi.dto.OrderDetailDTO;
+import ro.myclass.onlineStoreapi.exceptions.*;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.models.Order;
 import ro.myclass.onlineStoreapi.models.OrderDetail;
@@ -112,6 +110,39 @@ public class OrderDetailService {
         }else{
             this.orderDetailRepo.delete(orderDetail.get());
         }
+    }
+
+    @Transactional
+    public void updateOrderDetail(OrderDetailDTO orderDetailDTO){
+
+        Optional<OrderDetail> orderDetail = this.orderDetailRepo.findOrderDetailByProductIdAndOrderId(orderDetailDTO.getProduct().getId(),orderDetailDTO.getOrder().getId());
+
+        if(orderDetail.isEmpty()){
+            throw new OrderNotFoundException();
+        }
+
+        Optional<Product> product = this.productRepo.getProductByName(orderDetailDTO.getProduct().getName());
+
+        if(product.isEmpty()){
+            throw  new ProductNotFoundException();
+        }
+
+        if(orderDetailDTO.getQuantity() > 0){
+
+            if(orderDetailDTO.getQuantity() > product.get().getStock()){
+                throw new StockNotAvailableException("Stock not available");
+            }else{
+                product.get().setStock(product.get().getStock() - orderDetailDTO.getQuantity());
+
+                orderDetail.get().setQuantity(orderDetailDTO.getQuantity());
+
+            }
+
+            productRepo.save(product.get());
+
+        }
+
+        orderDetailRepo.saveAndFlush(orderDetail.get());
     }
 
     public OrderDetail  findOrderDetailByProductIdAndOrderId(long productId,long orderId){
