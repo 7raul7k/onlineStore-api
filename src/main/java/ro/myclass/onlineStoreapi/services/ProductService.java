@@ -1,22 +1,18 @@
 package ro.myclass.onlineStoreapi.services;
 
 
-
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
-
 import org.springframework.web.multipart.MultipartFile;
 import ro.myclass.onlineStoreapi.dto.ProductDTO;
 import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
 import ro.myclass.onlineStoreapi.exceptions.ProductNotFoundException;
 import ro.myclass.onlineStoreapi.exceptions.ProductWasFoundException;
-import ro.myclass.onlineStoreapi.images.ImageUtil;
 import ro.myclass.onlineStoreapi.models.Product;
 import ro.myclass.onlineStoreapi.repo.ProductRepo;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +44,6 @@ public class ProductService {
 
         if(product.isEmpty()){
             Product m = Product.builder().name(productDTO.getName())
-                    .image(new byte[24])
                     .price(productDTO.getPrice())
                     .stock(productDTO.getStock())
                     .build();

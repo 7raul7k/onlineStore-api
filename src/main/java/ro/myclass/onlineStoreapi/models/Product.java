@@ -1,6 +1,5 @@
 package ro.myclass.onlineStoreapi.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +8,6 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +63,7 @@ public class Product {
     @Override
     public boolean equals(Object obj){
         Product m = (Product) obj;
-        if(this.name.equals(m.getName())&&this.price==m.price&&this.image.equals(m.getImage())&&this.stock==m.getStock()){
+        if(this.name.equals(m.getName())&&this.price==m.price&&this.stock==m.getStock()){
             return true;
         }
         return false;

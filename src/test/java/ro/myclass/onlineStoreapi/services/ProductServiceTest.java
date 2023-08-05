@@ -1,7 +1,5 @@
 package ro.myclass.onlineStoreapi.services;
 
-import org.apache.tomcat.util.http.fileupload.FileItem;
-import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -9,8 +7,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import ro.myclass.onlineStoreapi.dto.ProductDTO;
 import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
 import ro.myclass.onlineStoreapi.exceptions.ProductNotFoundException;
@@ -18,12 +14,12 @@ import ro.myclass.onlineStoreapi.exceptions.ProductWasFoundException;
 import ro.myclass.onlineStoreapi.models.Product;
 import ro.myclass.onlineStoreapi.repo.ProductRepo;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 
@@ -72,11 +68,11 @@ class ProductServiceTest {
     @Test
     public void addProductOk(){
 
-        ProductDTO productDTO = ProductDTO.builder().name("Microphone trust gxt").image(new byte[23]).stock(198).price(650).build();
+        ProductDTO productDTO = ProductDTO.builder().name("Microphone trust gxt").stock(198).price(650).build();
 
-        Product m = Product.builder().name(productDTO.getName())
+
+        Product m = Product.builder().id(1L).name(productDTO.getName())
                 .price(productDTO.getPrice())
-                .image(productDTO.getImage())
                 .stock(productDTO.getStock())
                 .build();
         this.productService.addProduct(productDTO);

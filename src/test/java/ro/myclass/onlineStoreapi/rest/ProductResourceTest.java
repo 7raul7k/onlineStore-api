@@ -1,9 +1,7 @@
 package ro.myclass.onlineStoreapi.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
-import org.apache.catalina.connector.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,26 +10,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ro.myclass.onlineStoreapi.dto.CancelOrderRequest;
 import ro.myclass.onlineStoreapi.dto.ProductDTO;
 import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
 import ro.myclass.onlineStoreapi.exceptions.ProductNotFoundException;
 import ro.myclass.onlineStoreapi.exceptions.ProductWasFoundException;
 import ro.myclass.onlineStoreapi.models.Product;
-import ro.myclass.onlineStoreapi.services.CustomerService;
 import ro.myclass.onlineStoreapi.services.ProductService;
 
-
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,8 +31,7 @@ class ProductResourceTest {
     @Mock
     private ProductService productService;
 
-    @Mock
-    private CustomerService customerService;
+
 
     @InjectMocks
     private ProductResource productResource;

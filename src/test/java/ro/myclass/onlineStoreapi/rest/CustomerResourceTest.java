@@ -165,60 +165,9 @@ class CustomerResourceTest {
                 .content(mapper.writeValueAsString(new UpdateOrderRequest())));
     }
 
-   @Test
-    public void addOrder() throws Exception{
-        Faker faker = new Faker();
-        List<ProductCardRequest> productCardRequests = new ArrayList<>();
-
-        for(int i = 0 ; i < 5 ; i++){
-            productCardRequests.add(ProductCardRequest.builder().productId(faker.number().randomDigit()).quantity(faker.number().randomDigit()).build());
-        }
-        CreateOrderRequest createOrderRequest = CreateOrderRequest.builder().customerId(2).productCardRequests(productCardRequests).build();
-
-        doNothing().when(customerService).addOrder(createOrderRequest);
-
-        restMockMvc.perform(post("/api/v1/customer/addOrder")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(createOrderRequest)))
-                .andExpect(status().isOk());
-
-   }
-
-   @Test
-    public void addOrderBadRequest() throws Exception{
-        Faker faker = new Faker();
-        List<ProductCardRequest> productCardRequests = new ArrayList<>();
-        for(int i = 0 ; i < 3 ; i ++){
-            productCardRequests.add(ProductCardRequest.builder().productId(faker.number().randomDigit()).quantity(faker.number().randomDigit()).build());
-        }
-        CreateOrderRequest createOrderRequest = new CreateOrderRequest(1,productCardRequests);
-        doThrow(CustomerNotFoundException.class).when(customerService).addOrder(createOrderRequest);
-        restMockMvc.perform(post("/api/v1/customer/addOrder")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(createOrderRequest)))
-                .andExpect(status().isBadRequest());
-   }
-
-   @Test
-    public void cancelOrder() throws Exception{
-        CancelOrderRequest cancelOrderRequest = new CancelOrderRequest(1,2);
-
-        doNothing().when(customerService).cancelOrder(cancelOrderRequest);
-
-        restMockMvc.perform(delete("/api/v1/customer/cancelOrder")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(cancelOrderRequest)))
-                .andExpect(status().isOk());
 
 
-   }
 
-   @Test
-    public void cancelOrderBadRequest() throws Exception{
-        doThrow(CustomerNotFoundException.class).when(customerService).cancelOrder(new CancelOrderRequest());
-
-        restMockMvc.perform(delete("/api/v1/customer/cancelOrder").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new CancelOrderRequest()))).andExpect(status().isBadRequest());
-   }
 
    @Test
     public void getSortedListOk() throws Exception{

@@ -9,9 +9,18 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class UpdateOrderRequest {
+public class CreateOrderDetailRequest {
 
-    int customerId;
-    int orderId;
-    ProductCardRequest productCardRequest;
+    private int customerId;
+
+    private int orderId;
+
+
+    private double price;
+
+    private int quantity;
+
+    private int productId;
+
+
 }
