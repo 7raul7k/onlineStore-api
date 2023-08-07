@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ro.myclass.onlineStoreapi.dto.CancelOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CreateOrderRequest;
+import ro.myclass.onlineStoreapi.dto.OrderDTO;
 import ro.myclass.onlineStoreapi.dto.ProductCardRequest;
 import ro.myclass.onlineStoreapi.exceptions.CustomerNotFoundException;
 import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
@@ -135,20 +136,25 @@ class OrderResourceTest  {
 
         Customer customer = Customer.builder().id(1L).fullName("Stoica Ionut").email("stoicaionut@gmail.com").password("stoicaionut2023").build();
 
+        OrderDTO orderDTO = OrderDTO.builder().id(1).customerId(1).productCardRequests(new ArrayList<>()).build();
         Order order = Order.builder().id(1L).customer(customer).orderDetails(new ArrayList<>()).build();
 
-        doNothing().when(orderService).updateOrder(order);
+        doNothing().when(orderService).updateOrder(orderDTO);
 
-        restMockMvc.perform(put("/api/v1/order/updateOrder").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(order))).andExpect(status().isOk());
+        restMockMvc.perform(put("/api/v1/order/updateOrder").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(orderDTO))).andExpect(status().isOk());
 
     }
 
     @Test
     public void updateOrderBadRequest() throws Exception{
+        Customer customer = Customer.builder().id(1L).fullName("Stoica Ionut").email("stoicaionut@gmail.com").password("stoicaionut2023").build();
+        OrderDTO  orderDTO = OrderDTO.builder().productCardRequests(new ArrayList<>()).customerId(1).build();
 
-        doThrow(OrderNotFoundException.class).when(orderService).updateOrder(new Order());
 
-        restMockMvc.perform(put("/api/v1/order/updateOrder").contentType(MediaType.ALL).content(objectMapper.writeValueAsBytes(new Order()))).andExpect(status().isBadRequest());
+        Order  order = Order.builder().orderDetails(new ArrayList<>()).id(1L).customer(customer).build();
+        doThrow(OrderNotFoundException.class).when(orderService).updateOrder(orderDTO);
+
+        restMockMvc.perform(put("/api/v1/order/updateOrder").content(objectMapper.writeValueAsBytes(orderDTO)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
 
 
     }

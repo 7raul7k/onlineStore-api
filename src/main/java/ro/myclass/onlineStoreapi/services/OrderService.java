@@ -4,12 +4,15 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import ro.myclass.onlineStoreapi.dto.CancelOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CreateOrderRequest;
+import ro.myclass.onlineStoreapi.dto.OrderDTO;
+import ro.myclass.onlineStoreapi.dto.ProductCardRequest;
 import ro.myclass.onlineStoreapi.exceptions.*;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.models.Order;
 import ro.myclass.onlineStoreapi.models.OrderDetail;
 import ro.myclass.onlineStoreapi.models.Product;
 import ro.myclass.onlineStoreapi.repo.CustomerRepo;
+import ro.myclass.onlineStoreapi.repo.OrderDetailRepo;
 import ro.myclass.onlineStoreapi.repo.OrderRepo;
 import ro.myclass.onlineStoreapi.repo.ProductRepo;
 
@@ -28,11 +31,14 @@ public class OrderService {
 
     private ProductRepo productRepo;
 
+    private OrderDetailRepo orderDetailRepo;
 
-    public OrderService(OrderRepo orderRepo, CustomerRepo customerRepo, ProductRepo productRepo) {
+
+    public OrderService(OrderRepo orderRepo, CustomerRepo customerRepo, ProductRepo productRepo, OrderDetailRepo orderDetailRepo) {
         this.orderRepo = orderRepo;
         this.customerRepo = customerRepo;
         this.productRepo = productRepo;
+        this.orderDetailRepo = orderDetailRepo;
     }
 
     public List<Order>  getAllOrder(){
@@ -127,23 +133,44 @@ public class OrderService {
     }
 
     @Transactional
-    @Modifying
-    public void updateOrder(Order orderDTO){
+    public void updateOrder(OrderDTO orderDTO){
 
-        Optional<Order> order = this.orderRepo.getOrderByIdAndCustomerId(orderDTO.getId(),orderDTO.getCustomer().getId());
+        Optional<Order> order = this.orderRepo.getOrderByIdAndCustomerId(orderDTO.getId(), orderDTO.getCustomerId());
 
         if(order.isEmpty()){
             throw new OrderNotFoundException();
         }
 
-        if(orderDTO.getOrderDate() !=null){
+        if(orderDTO.getLocalDate() !=null){
 
-            order.get().setOrderDate(orderDTO.getOrderDate());
-        }if(orderDTO.getOrderDetails() !=null){
-            order.get().setOrderDetails(orderDTO.getOrderDetails());
+            order.get().setOrderDate(orderDTO.getLocalDate());
+        }if(orderDTO.getProductCardRequests() !=null){
+
+          List<ProductCardRequest> productCardRequests = orderDTO.getProductCardRequests();
+
+          for(ProductCardRequest productCardRequest : productCardRequests){
+
+              OrderDetail orderDetail = this.orderDetailRepo.findOrderDetailByProductIdAndOrderId(productCardRequest.getProductId(),orderDTO.getId()).get();
+
+              Product product = this.productRepo.getProductById(productCardRequest.getProductId()).get();
+
+              if(productCardRequest.getQuantity() > product.getStock()){
+                  throw new StockNotAvailableException("");
+              }else {
+                  product.setStock(product.getStock() - productCardRequest.getQuantity());
+                  orderDetail.setQuantity(productCardRequest.getQuantity());
+              }
+
+
+              this.orderDetailRepo.saveAndFlush(orderDetail);
+
+
+          }
+
+
         }
 
-        this.orderRepo.saveAndFlush(orderDTO);
+        this.orderRepo.saveAndFlush(order.get());
 
 
     }

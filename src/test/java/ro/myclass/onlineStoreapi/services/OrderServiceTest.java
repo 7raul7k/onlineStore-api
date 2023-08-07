@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ro.myclass.onlineStoreapi.dto.CancelOrderRequest;
 import ro.myclass.onlineStoreapi.dto.CreateOrderRequest;
+import ro.myclass.onlineStoreapi.dto.OrderDTO;
 import ro.myclass.onlineStoreapi.dto.ProductCardRequest;
 import ro.myclass.onlineStoreapi.exceptions.*;
 import ro.myclass.onlineStoreapi.models.Customer;
@@ -211,11 +212,14 @@ class OrderServiceTest {
     public void updateOrder(){
         Customer customer = Customer.builder().id(1L).fullName("Stoica Ionut").email("stoicaionut@gmail.com").password("stoicaionut2023").build();
 
+
+        OrderDTO orderdto = OrderDTO.builder().productCardRequests(new ArrayList<>()).id(1).customerId(1).build();
+
         Order order = Order.builder().id(1L).orderDate(LocalDate.now()).customer(customer).build();
 
         doReturn(Optional.of(order)).when(orderRepo).getOrderByIdAndCustomerId(1L,1L);
 
-        this.orderService.updateOrder(order);
+        this.orderService.updateOrder(orderdto);
         verify(orderRepo,times(1)).saveAndFlush(captor.capture());
 
         assertEquals(captor.getValue(),order);
@@ -226,11 +230,13 @@ class OrderServiceTest {
     public void updateOrderError(){
         Customer customer = Customer.builder().id(1L).fullName("test").password("test").email("test").build();
 
+        OrderDTO orderdto = OrderDTO.builder().productCardRequests(new ArrayList<>()).id(1).customerId(1).build();
+
 
         doReturn(Optional.empty()).when(orderRepo).getOrderByIdAndCustomerId(1L,1L);
 
         assertThrows(OrderNotFoundException.class,()->{
-            this.orderService.updateOrder(Order.builder().customer(customer).orderDate(LocalDate.now()).id(1L).build());
+            this.orderService.updateOrder(orderdto);
         });
     }
 
