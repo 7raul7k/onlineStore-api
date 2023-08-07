@@ -11,9 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ro.myclass.onlineStoreapi.dto.CreateOrderDetailRequest;
-import ro.myclass.onlineStoreapi.dto.CreateOrderRequest;
-import ro.myclass.onlineStoreapi.dto.OrderDetailDTO;
+import ro.myclass.onlineStoreapi.dto.*;
 import ro.myclass.onlineStoreapi.exceptions.CustomerNotFoundException;
 import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
 import ro.myclass.onlineStoreapi.exceptions.OrderNotFoundException;
@@ -127,25 +125,22 @@ class OrderDetailResourceTest {
     @Test
     public void updateOrderDetail() throws Exception{
 
-
-        Order order = Order.builder().id(1L).customer(new Customer()).build();
-
-        Product product = Product.builder().id(1L).price(640).name("Razer Microphone for streaming").image(new byte[23]).stock(400).build();
-
-        OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder().order(order).product(product).quantity(100).price(product.getPrice()).build();
-
+        ProductCardRequest productCardRequest = ProductCardRequest.builder().productId(1).quantity(1).build();
+        OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder().productCardRequest(productCardRequest).orderId(1).build();
         doNothing().when(orderDetailService).updateOrderDetail(orderDetailDTO);
 
-        restMockMvc.perform(put("/api/v1/orderDetail/updateOrderDetail").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(orderDetailDTO))).andExpect(status().isOk());
+        restMockMvc.perform(put("/api/v1/orderDetail/updateOrderDetail").content(objectMapper.writeValueAsString(orderDetailDTO)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 
     }
 
     @Test
     public void updateOrderDetailBadRequest() throws Exception{
+    ProductCardRequest productCardRequest = ProductCardRequest.builder().productId(1).quantity(1).build();
+        OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder().orderId(1).productCardRequest(productCardRequest).build();
 
-        doThrow(OrderNotFoundException.class).when(orderDetailService).updateOrderDetail(new OrderDetailDTO());
+        doThrow(OrderNotFoundException.class).when(orderDetailService).updateOrderDetail(orderDetailDTO);
 
-        restMockMvc.perform(put("/api/v1/orderDetail/updateOrderDetail").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new OrderDetailDTO()))).andExpect(status().isBadRequest());
+        restMockMvc.perform(put("/api/v1/orderDetail/updateOrderDetail").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(orderDetailDTO))).andExpect(status().isBadRequest());
 
 
     }

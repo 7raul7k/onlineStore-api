@@ -4,19 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import ro.myclass.onlineStoreapi.models.Order;
-import ro.myclass.onlineStoreapi.models.Product;
+
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class OrderDetailDTO {
+public class OrderDetailDTO implements Serializable {
 
-    private double price;
-    private int quantity;
-    private Order order;
-    private Product product;
+    private ProductCardRequest productCardRequest;
+
+    private int orderId;
+
 
 
 

@@ -57,7 +57,7 @@ public class OrderDetailResource {
 
 
     @PutMapping("/updateOrderDetail")
-    public ResponseEntity<CreateOrderResponse> updateOrderDetail(@RequestParam OrderDetailDTO orderDetailDTO) {
+    public ResponseEntity<CreateOrderResponse> updateOrderDetail(@RequestBody OrderDetailDTO orderDetailDTO) {
 
         this.orderDetailService.updateOrderDetail(orderDetailDTO);
 

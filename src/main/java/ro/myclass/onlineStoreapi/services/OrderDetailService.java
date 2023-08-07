@@ -1,8 +1,10 @@
 package ro.myclass.onlineStoreapi.services;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import ro.myclass.onlineStoreapi.dto.CreateOrderDetailRequest;
 import ro.myclass.onlineStoreapi.dto.OrderDetailDTO;
+import ro.myclass.onlineStoreapi.dto.ProductCardRequest;
 import ro.myclass.onlineStoreapi.exceptions.*;
 import ro.myclass.onlineStoreapi.models.Customer;
 import ro.myclass.onlineStoreapi.models.Order;
@@ -113,34 +115,31 @@ public class OrderDetailService {
     }
 
     @Transactional
+    @Modifying
     public void updateOrderDetail(OrderDetailDTO orderDetailDTO){
 
-        Optional<OrderDetail> orderDetail = this.orderDetailRepo.findOrderDetailByProductIdAndOrderId(orderDetailDTO.getProduct().getId(),orderDetailDTO.getOrder().getId());
+        ProductCardRequest productCardRequest = orderDetailDTO.getProductCardRequest();
+        Optional<OrderDetail> orderDetail = this.orderDetailRepo.findOrderDetailByProductIdAndOrderId(productCardRequest.getProductId(),orderDetailDTO.getOrderId());
 
         if(orderDetail.isEmpty()){
             throw new OrderNotFoundException();
         }
 
-        Optional<Product> product = this.productRepo.getProductByName(orderDetailDTO.getProduct().getName());
+        Optional<Product> product = this.productRepo.getProductById(productCardRequest.getProductId());
 
         if(product.isEmpty()){
             throw  new ProductNotFoundException();
-        }
+        }if(productCardRequest.getQuantity() < product.get().getStock()){
 
-        if(orderDetailDTO.getQuantity() > 0){
+                product.get().setStock(product.get().getStock() - orderDetailDTO.getProductCardRequest().getQuantity());
 
-            if(orderDetailDTO.getQuantity() > product.get().getStock()){
-                throw new StockNotAvailableException("Stock not available");
-            }else{
-                product.get().setStock(product.get().getStock() - orderDetailDTO.getQuantity());
-
-                orderDetail.get().setQuantity(orderDetailDTO.getQuantity());
+                orderDetail.get().setQuantity(orderDetailDTO.getProductCardRequest().getQuantity());
 
             }
 
-            productRepo.save(product.get());
+            productRepo.saveAndFlush(product.get());
 
-        }
+
 
         orderDetailRepo.saveAndFlush(orderDetail.get());
     }

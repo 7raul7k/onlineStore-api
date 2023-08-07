@@ -8,7 +8,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ro.myclass.onlineStoreapi.dto.CreateOrderDetailRequest;
+import ro.myclass.onlineStoreapi.dto.OrderDTO;
 import ro.myclass.onlineStoreapi.dto.OrderDetailDTO;
+import ro.myclass.onlineStoreapi.dto.ProductCardRequest;
 import ro.myclass.onlineStoreapi.exceptions.CustomerNotFoundException;
 import ro.myclass.onlineStoreapi.exceptions.ListEmptyException;
 import ro.myclass.onlineStoreapi.exceptions.OrderNotFoundException;
@@ -229,16 +231,16 @@ class OrderDetailServiceTest {
     public void updateOrderDetail(){
         Customer customer = Customer.builder().id(1L).fullName("Stanciu Marian").email("stanciumarian@gmail.com").password("stanciumarian2023").build();
 
-        Order order = Order.builder().id(1L).orderDate(LocalDate.now()).customer(new Customer()).build();
-
+        OrderDTO orderDTO = OrderDTO.builder().id(1).productCardRequests(new ArrayList<>()).customerId(1).build();
         Product product = Product.builder().id(1L).price(640).name("Razer Microphone for streaming").image(new byte[23]).stock(400).build();
 
-        OrderDetail orderDetail = OrderDetail.builder().order(order).id(1L).quantity(100).product(product).price(200).build();
+        OrderDetail orderDetail = OrderDetail.builder().order(new Order()).product(new Product()).price(200).quantity(15).build();
 
-        OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder().order(order).product(product).quantity(100).price(product.getPrice()).build();
+        ProductCardRequest productCardRequest = ProductCardRequest.builder().productId(1).quantity(1).build();
+        OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder().orderId(1).productCardRequest(productCardRequest).build();
         doReturn(Optional.of(orderDetail)).when(orderDetailRepo).findOrderDetailByProductIdAndOrderId(1L,1L);
 
-        doReturn(Optional.of(product)).when(productRepo).getProductByName(product.getName());
+        doReturn(Optional.of(product)).when(productRepo).getProductById((long) productCardRequest.getProductId());
 
         this.orderDetailService.updateOrderDetail(orderDetailDTO);
 
@@ -250,11 +252,15 @@ class OrderDetailServiceTest {
 
     @Test
     public void updateOrderDetailOrderDetailError(){
+        Product product = Product.builder().id(1L).price(640).name("Razer Microphone for streaming").image(new byte[23]).stock(400).build();
 
+        OrderDTO orderDTO = OrderDTO.builder().id(1).customerId(1).productCardRequests(new ArrayList<>()).build();
+        ProductCardRequest productCardRequest = ProductCardRequest.builder().productId(1).quantity(1).build();
+       OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder().orderId(1).productCardRequest(productCardRequest).build();
         doReturn(Optional.empty()).when(orderDetailRepo).findOrderDetailByProductIdAndOrderId(1L,1L);
 
         assertThrows(OrderNotFoundException.class,()->{
-            this.orderDetailService.updateOrderDetail(OrderDetailDTO.builder().order(Order.builder().id(1L).build()).product(Product.builder().id(1L).build()).build());
+            this.orderDetailService.updateOrderDetail(orderDetailDTO);
         });
     }
 
@@ -269,11 +275,13 @@ class OrderDetailServiceTest {
 
         OrderDetail orderDetail = OrderDetail.builder().order(order).id(1L).quantity(100).product(product).price(200).build();
 
-        doReturn(Optional.of(orderDetail)).when(orderDetailRepo).findOrderDetailByProductIdAndOrderId(1L,1L);
+        OrderDTO orderDTO = OrderDTO.builder().id(1).productCardRequests(new ArrayList<>()).customerId(1).build();
 
-        doReturn(Optional.empty()).when(productRepo).getProductByName(product.getName());
+        doReturn(Optional.of(orderDetail)).when(orderDetailRepo).findOrderDetailByProductIdAndOrderId(1L,1L);
+        ProductCardRequest productCardRequest = ProductCardRequest.builder().productId(1).quantity(1).build();
+        doReturn(Optional.empty()).when(productRepo).getProductById(1);
         assertThrows(ProductNotFoundException.class,()->{
-            this.orderDetailService.updateOrderDetail(OrderDetailDTO.builder().order(order).product(product).build());
+            this.orderDetailService.updateOrderDetail(OrderDetailDTO.builder().orderId(1).productCardRequest(productCardRequest).build());
         });
     }
 
